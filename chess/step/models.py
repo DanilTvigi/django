@@ -21,10 +21,7 @@ class desk(models.Model):
 #     pin_game = models.IntegerField()
 #     queue_step = models.IntegerField()
 #     user_id_W = models.IntegerField(default=5)
-#     username_W = models.CharField(max_length=25)
 #     user_id_B = models.IntegerField(default=5)
-#     username_B = models.CharField(max_length=25)
-#     username = models.CharField(max_length=25)
 #     step = models.CharField(max_length=10)
 #     time = models.IntegerField()
 
