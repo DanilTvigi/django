@@ -236,6 +236,7 @@ class Analyse:
         return color
     
     def step(color, moves, past_pole):
+        lenght = len(moves)
         # past_pole = {'A1': 'WR', 'B1': 'WH', 'C1': 'WB', 'D1': 'WQ', 'E1': 'WK', 'F1': 'WB', 'G1': 'WH', 'H1': 'WR', 
         #             'A2': 'WP', 'B2': 'WP', 'C2': 'WP', 'D2': 'WP', 'E2': 'WP', 'F2': 'WP', 'G2': 'WP', 'H2': 'WP', 
         #             'A3': '', 'B3': '', 'C3': '', 'D3': '', 'E3': '', 'F3': '', 'G3': '', 'H3': '', 
@@ -246,7 +247,7 @@ class Analyse:
         #             'A8': 'BR', 'B8': 'BH', 'C8': 'BB', 'D8': 'BQ', 'E8': 'BK', 'F8': 'BB', 'G8': 'BH', 'H8': 'BR'}
 
 
-        for i in range(len(moves)):
+        for i in range(lenght):
             past_pole[i]=moves[i]
 
         # past_pole = {'A1': '1', 'B1': '1', 'C1': '1', 'D1': '1', 'E1': '1', 'F1': '1', 'G1': '1', 'H1': '1', 
@@ -277,3 +278,7 @@ class Analyse:
                 break
         step = past_cell + new_cell
         
+        for i in range(lenght):
+            moves[i]=past_pole[i]
+
+        return moves, step

@@ -32,7 +32,7 @@ def test(request):
     cords_ancle = Analyse.cords_ancle_board(QRs)
     img_np, kletki, color, past_pole = Analyse.search_cell(cords_ancle, img_np)
     # color = Analyse.color_pixel(img_np, kletki, color)
-    # step = Analyse.step(color, moves, past_pole) # moves массив прошлого хода
+    # moves, step = Analyse.step(color, moves, past_pole) # moves массив прошлого хода
     # for key in kletki:
     #     cv2.putText(img_np, str(color[key]), kletki[key], cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 1)
     #     cv2.imwrite('res22.png', img_np)
