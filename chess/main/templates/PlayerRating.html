@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <h2 class="text-center" style="padding: 25px 0;">РЕЙТИНГ ИГРОКОВ</h2>
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center">#</th>
+                <th scope="col" class="text-center">Имя</th>
+                <th scope="col" class="text-center">Рейтинг</th>
+                <th scope="col" class="text-center">Количество игр</th>
+                <th scope="col" class="text-center">Победы/Поражения</th>
+                <th scope="col" class="text-center">Времени в игре</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <th scope="row" class="text-center">{{ forloop.counter }}</th>
+                <td class="text-center"><a href="{% url 'PlayerProfile' user.id %}" class="nav-link">{{ user.username }}</a></td>
+                <td class="text-center">{{ user.rating }}</td>
+                <td class="text-center">{{ user.play_count }}</td>
+                <td class="text-center">{{ user.win }}/{{ user.lose }}</td>
+                <td class="text-center">{{ user.minuteInGame }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+    <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 
+{% endblock script %}

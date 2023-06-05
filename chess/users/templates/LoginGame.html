@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+    <div class="container text-center" style="width: 275px;">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-floating mb-3">
+            <input name="pin" type="text" class="form-control" id="floatingInput" placeholder="PIN" maxlength="6">
+            <label for="floatingInput">PIN игры</label>
+        </div>
+        <input type="submit" value="Присойдениться" class="btn btn-warning">
+    </form>
+    </div>
+    {% if message %}
+        <div class="container"  style="width: 350px;">
+            <div class="alert alert-warning text-center" role="alert" style="margin-top: 25px;">
+                {{ message }}
+            </div>
+        </div>
+    {% endif %}
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+{% endblock script %}

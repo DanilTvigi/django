@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="container text-center" style="width: 275px;">
+    <button id="run-script-button">Запустить скрипт</button>
+
+    <script>
+        $(document).ready(function () {
+            $('#run-script-button').click(function () {
+                $.ajax({
+                    url: 'but',
+                    type: 'POST',
+                    success: function (response) {
+                        alert('Скрипт запущен!');
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Ошибка: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</div>
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock script %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <h2 class="text-center" style="padding: 25px 0;">ИСТОРИЯ ИГР</h2>
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center">Белые</th>
+                <th scope="col" class="text-center">Черные</th>
+                <th scope="col" class="text-center">Результат</th>
+                <th scope="col" class="text-center">Дата игры</th>
+                <th scope="col" class="text-center">Длительность игры</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td class="text-center"><a href="PlayerProfile" class="link_in_table">{{ game.username_W }}</a></td>
+                <td class="text-center"><a href="PlayerProfile" class="link_in_table">{{ game.username_B }}</a></td>
+                <td class="text-center"><a href="PlayerProfile" class="link_in_table">{{ game.result }}</a></td>
+                <td class="text-center">{{ game.dateTime }}</td>
+                <td class="text-center">{{ game.lenght_game }}</td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+    <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 
+{% endblock script %}
