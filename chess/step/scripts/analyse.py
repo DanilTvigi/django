@@ -84,6 +84,7 @@ class Analyse:
     def search_cell(cords_ancle, img_np):
         kletki = dict()
         color = dict()
+        past_pole =  dict()
         #[[651, 942], [651, 350], [1225, 350], [1225, 942]]
         v = cords_ancle[0][1] - cords_ancle[1][1]
         g = cords_ancle[2][0] - cords_ancle[1][0]
@@ -186,6 +187,7 @@ class Analyse:
                 mark = j + str(i)
                 kletki[mark] = ''
                 color[mark] = ''
+                past_pole[mark] = ''
                 chet += 1
 
         for key in kletki:
@@ -208,7 +210,7 @@ class Analyse:
         #     cv2.rectangle(img_np, (x, y), (x+50,y+50), (0,0,255), 2)
 
         cv2.imwrite('res.png', img_np)
-        return img_np, kletki, color
+        return img_np, kletki, color, past_pole
     
     def color_pixel(img_np, kletki, color):
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
@@ -233,39 +235,50 @@ class Analyse:
                 color[key] = 0
         return color
     
-    # def step(color):
-    #     pole_def = {'A1': 'WR', 'B1': 'WH', 'C1': 'WB', 'D1': 'WQ', 'E1': 'WK', 'F1': 'WB', 'G1': 'WH', 'H1': 'WR', 
-    #                 'A2': 'WP', 'B2': 'WP', 'C2': 'WP', 'D2': 'WP', 'E2': 'WP', 'F2': 'WP', 'G2': 'WP', 'H2': 'WP', 
-    #                 'A3': '', 'B3': '', 'C3': '', 'D3': '', 'E3': '', 'F3': '', 'G3': '', 'H3': '', 
-    #                 'A4': '', 'B4': '', 'C4': '', 'D4': '', 'E4': '', 'F4': '', 'G4': '', 'H4': '', 
-    #                 'A5': '', 'B5': '', 'C5': '', 'D5': '', 'E5': '', 'F5': '', 'G5': '', 'H5': '', 
-    #                 'A6': '', 'B6': '', 'C6': '', 'D6': '', 'E6': '', 'F6': '', 'G6': '', 'H6': '', 
-    #                 'A7': 'BP', 'B7': 'BP', 'C7': 'BP', 'D7': 'BP', 'E7': 'BP', 'F7': 'BP', 'G7': 'BP', 'H7': 'BP', 
-    #                 'A8': 'BR', 'B8': 'BH', 'C8': 'BB', 'D8': 'BQ', 'E8': 'BK', 'F8': 'BB', 'G8': 'BH', 'H8': 'BR'}
-        
-    #     past_pole = {'A1': '1', 'B1': '1', 'C1': '1', 'D1': '1', 'E1': '1', 'F1': '1', 'G1': '1', 'H1': '1', 
-    #                  'A2': '1', 'B2': '1', 'C2': '1', 'D2': '1', 'E2': '1', 'F2': '1', 'G2': '1', 'H2': '1', 
-    #                  'A3': '0', 'B3': '0', 'C3': '0', 'D3': '0', 'E3': '0', 'F3': '0', 'G3': '0', 'H3': '0', 
-    #                  'A4': '0', 'B4': '0', 'C4': '0', 'D4': '0', 'E4': '0', 'F4': '0', 'G4': '0', 'H4': '0', 
-    #                  'A5': '0', 'B5': '0', 'C5': '0', 'D5': '0', 'E5': '0', 'F5': '0', 'G5': '0', 'H5': '0', 
-    #                  'A6': '0', 'B6': '0', 'C6': '0', 'D6': '0', 'E6': '0', 'F6': '0', 'G6': '0', 'H6': '0', 
-    #                  'A7': '1', 'B7': '1', 'C7': '1', 'D7': '1', 'E7': '1', 'F7': '1', 'G7': '1', 'H7': '1', 
-    #                  'A8': '1', 'B8': '1', 'C8': '1', 'D8': '1', 'E8': '1', 'F8': '1', 'G8': '1', 'H8': '1'}
-        
-    #     current_pole = color
+    def step(color, moves, past_pole):
+        lenght = len(moves)
+        # past_pole = {'A1': 'WR', 'B1': 'WH', 'C1': 'WB', 'D1': 'WQ', 'E1': 'WK', 'F1': 'WB', 'G1': 'WH', 'H1': 'WR', 
+        #             'A2': 'WP', 'B2': 'WP', 'C2': 'WP', 'D2': 'WP', 'E2': 'WP', 'F2': 'WP', 'G2': 'WP', 'H2': 'WP', 
+        #             'A3': '', 'B3': '', 'C3': '', 'D3': '', 'E3': '', 'F3': '', 'G3': '', 'H3': '', 
+        #             'A4': '', 'B4': '', 'C4': '', 'D4': '', 'E4': '', 'F4': '', 'G4': '', 'H4': '', 
+        #             'A5': '', 'B5': '', 'C5': '', 'D5': '', 'E5': '', 'F5': '', 'G5': '', 'H5': '', 
+        #             'A6': '', 'B6': '', 'C6': '', 'D6': '', 'E6': '', 'F6': '', 'G6': '', 'H6': '', 
+        #             'A7': 'BP', 'B7': 'BP', 'C7': 'BP', 'D7': 'BP', 'E7': 'BP', 'F7': 'BP', 'G7': 'BP', 'H7': 'BP', 
+        #             'A8': 'BR', 'B8': 'BH', 'C8': 'BB', 'D8': 'BQ', 'E8': 'BK', 'F8': 'BB', 'G8': 'BH', 'H8': 'BR'}
 
-    #     past_cell = ''
-    #     new_cell  = ''
-    #     step = ''
-    #     for key in current_pole:
-    #         if current_pole[key] == past_pole[key]:
-    #             continue
-    #         else:
-    #             if current_pole[key] == 0:
-    #                 past_cell = key
-    #             elif current_pole[key] == 1:
-    #                 new_cell = key
-    #         if past_cell != '' and new_cell != '':
-    #             step = past_cell + new_cell
-    #             past_cell, new_cell = '', ''
-    #             break
+
+        for i in range(lenght):
+            past_pole[i]=moves[i]
+
+        # past_pole = {'A1': '1', 'B1': '1', 'C1': '1', 'D1': '1', 'E1': '1', 'F1': '1', 'G1': '1', 'H1': '1', 
+        #              'A2': '1', 'B2': '1', 'C2': '1', 'D2': '1', 'E2': '1', 'F2': '1', 'G2': '1', 'H2': '1', 
+        #              'A3': '0', 'B3': '0', 'C3': '0', 'D3': '0', 'E3': '0', 'F3': '0', 'G3': '0', 'H3': '0', 
+        #              'A4': '0', 'B4': '0', 'C4': '0', 'D4': '0', 'E4': '0', 'F4': '0', 'G4': '0', 'H4': '0', 
+        #              'A5': '0', 'B5': '0', 'C5': '0', 'D5': '0', 'E5': '0', 'F5': '0', 'G5': '0', 'H5': '0', 
+        #              'A6': '0', 'B6': '0', 'C6': '0', 'D6': '0', 'E6': '0', 'F6': '0', 'G6': '0', 'H6': '0', 
+        #              'A7': '1', 'B7': '1', 'C7': '1', 'D7': '1', 'E7': '1', 'F7': '1', 'G7': '1', 'H7': '1', 
+        #              'A8': '1', 'B8': '1', 'C8': '1', 'D8': '1', 'E8': '1', 'F8': '1', 'G8': '1', 'H8': '1'}
+        
+        current_pole = color
+
+        past_cell, new_cell = '', ''
+        step = ''
+
+        for key in current_pole:
+            if current_pole[key] == past_pole[key]:
+                continue
+            else:
+                if current_pole[key] == '0':
+                    past_cell = key
+                    past_pole[key] = '0' 
+                elif current_pole[key] == '1':
+                    new_cell = key
+                    past_pole[key] = '1'
+            if past_cell != '' and new_cell != '':
+                break
+        step = past_cell + new_cell
+        
+        for i in range(lenght):
+            moves[i]=past_pole[i]
+
+        return moves, step

@@ -119,6 +119,20 @@ def LoginGame(request):
         return render(request, 'LoginGame.html', context=data)
 
     
+@login_required
+def Desk(request):
+    min = request.GET.get('min')
+    is_exists = SessionConnection.objects.filter(user1_id = request.user.id).exists()
+    if is_exists:
+        filt_record = SessionConnection.objects.get(user1_id = request.user.id)             
+        pin = filt_record.pin_game
+        data = {'pin' : pin, 'message':"У Вас уже имеется созданная игровая сессия, вот ее номер"} 
+    else:
+        
+        return redirect('PINGame', min = min)
+         
+    return render(request, 'Desk.html', context=data)
+
 
 
 @login_required
@@ -140,12 +154,11 @@ def PINGame(request):
                                                       user2_id=None, 
                                                       min = min,
                                                       sec = sec,
-                                                      delete_time=delete_time)
+                                                      delete_time=delete_time,
+                                                      desk = 0)
         # data = {'pin' : random_number}  
         return redirect('Desk')
          
     return render(request, 'PINGame.html', context=data)
 
-def Desk(request):
-     return render(request, 'Desk.html')
  

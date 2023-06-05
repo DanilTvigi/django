@@ -19,8 +19,9 @@ class SessionConnection(models.Model):
     user1 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='session_connections1', on_delete=models.CASCADE)
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='session_connections2', on_delete=models.CASCADE, null=True)
     pin_game = models.CharField(max_length=6)
+    desk = models.IntegerField()
     min = models.CharField(max_length=3)
-    sec = models.CharField(max_length=2)
+    # sec = models.CharField(max_length=2)
     delete_time = models.DateTimeField(null=True, blank=True)   
 
 

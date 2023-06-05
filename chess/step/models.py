@@ -17,11 +17,11 @@ class desk(models.Model):
 #     length_game = models.IntegerField(default=0)
 #     dateTime = models.DateTimeField()
 
-# class Steps(models.Model):
-#     pin_game = models.IntegerField()
-#     queue_step = models.IntegerField()
-#     user_id_W = models.IntegerField(default=5)
-#     user_id_B = models.IntegerField(default=5)
-#     step = models.CharField(max_length=10)
-#     time = models.IntegerField()
-
+class Steps(models.Model):
+    pin_game = models.IntegerField()
+    queue_step = models.IntegerField()
+    moves = models.TextField(max_length=200)
+    user_id_W = models.IntegerField(default=5)
+    user_id_B = models.IntegerField(default=5)
+    step = models.CharField(max_length=10)
+    time = models.IntegerField()
