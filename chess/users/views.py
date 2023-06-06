@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 
 from users.models import SessionConnection, CustomUser
 from main.models import GameHistory
-from step.models import desk
+from step.models import Desk
 from .forms import UserRegisterForm
 from django.contrib.auth.decorators import login_required
 from .forms import CustomLoginForm
 from django.contrib.auth import authenticate, login
 import random
 from datetime import datetime, timedelta
+
+
 
 
 def generate_random_number():
@@ -108,6 +110,7 @@ def LoginGame(request):
                                                     user_B_id=curent_user,
                                                     username_B=username_B,
                                                     result=0,
+                                                    pin_game = pin_input,
                                                     dateTime=datetime.now(),
                                                     lenght_game=0)
             return redirect('Timer')
@@ -120,16 +123,18 @@ def LoginGame(request):
 
     
 @login_required
-def Desk(request):
+def DeskGame(request):
     min = request.GET.get('min')
+    request.session['min']=min
     is_exists = SessionConnection.objects.filter(user1_id = request.user.id).exists()
     if is_exists:
         filt_record = SessionConnection.objects.get(user1_id = request.user.id)             
         pin = filt_record.pin_game
         data = {'pin' : pin, 'message':"У Вас уже имеется созданная игровая сессия, вот ее номер"} 
     else:
-        
-        return redirect('PINGame', min = min)
+        desks = Desk.objects.all()
+        data = {'desks':desks}
+        return render(request, 'Desk.html', context=data)
          
     return render(request, 'Desk.html', context=data)
 
@@ -137,10 +142,14 @@ def Desk(request):
 
 @login_required
 def PINGame(request):
-    min = request.GET.get('min')
-    sec = request.GET.get('sec')
-    # request.session['min'] = min
-    # request.session['sec'] = sec 
+    min = request.session.get('min')
+    data = list(Desk.objects.values_list('id', flat=True))
+    if request.method == 'POST':
+        if 'button' in request.POST:
+            button_value = int(request.POST['button'])
+        else:
+             data = {'message':'Не выбран стол'}
+             return render(request, 'PINGame.html', context=data)
     is_exists = SessionConnection.objects.filter(user1_id = request.user.id).exists()
     if is_exists:
         filt_record = SessionConnection.objects.get(user1_id = request.user.id)             
@@ -150,15 +159,13 @@ def PINGame(request):
         random_number = generate_random_number()
         delete_time = datetime.now() + timedelta(seconds=15)
         new_record = SessionConnection.objects.create(pin_game=random_number, 
-                                                      user1_id=request.user.id, 
-                                                      user2_id=None, 
-                                                      min = min,
-                                                      sec = sec,
-                                                      delete_time=delete_time,
-                                                      desk = 0)
-        # data = {'pin' : random_number}  
-        return redirect('Desk')
-         
-    return render(request, 'PINGame.html', context=data)
+                                                        user1_id=request.user.id, 
+                                                        user2_id=None, 
+                                                        min = min,
+                                                    #   sec = sec,
+                                                        delete_time=delete_time,
+                                                        desk = button_value)
+        data = {'pin' : random_number}  
+        return render(request, 'PINGame.html', context=data)
 
  

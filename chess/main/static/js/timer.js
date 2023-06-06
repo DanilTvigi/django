@@ -123,6 +123,13 @@ const startTimer = () => {
 // Слушатель события клика на панели таймера для смены игрока
 timerPanel.addEventListener('click', swapPlayer)
    
+// Слушатель события нажатия клавиши пробела для смены игрока
+document.addEventListener('keypress', event => {
+    if (event.keyCode === 32 || event.which === 32) {
+        swapPlayer();
+    }
+});
+
 
 
 
@@ -141,9 +148,4 @@ for (let i = 0; i < buttons.length; i++) {
     });
 }
 
-// Слушатель события нажатия клавиши пробела для смены игрока
-document.addEventListener('keypress', event => {
-    if (event.keyCode === 32 || event.which === 32) {
-        swapPlayer();
-    }
-});
+

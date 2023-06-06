@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
     lose = models.IntegerField(null=True, default=0)
     minuteInGame = models.IntegerField(null=True, default=0)
     rating = models.FloatField()
-
+    
     groups = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='customuser_groups', blank=True)
     user_permissions = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='customuser_user_permissions', blank=True)
 

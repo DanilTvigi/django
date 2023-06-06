@@ -6,11 +6,17 @@
     <div class="container " style="width: 450px; padding-top: 50px;">
         <div class="align-content-center">
             <h2 class="text-center">Выберите стол</h2>
-            <form method="POST" class="text-center" action="{% url PINGame %}">
+            <form method="POST" class="text-center" action="{% url 'PINGame' %}">
                 {% csrf_token %}
                 <div class="form-group">
-                    <button class="btn btn-success" type="submit" style="font-size: 20px;" name="desk1">Стол 1</button>
-                    <button class="btn btn-success" type="submit" style="font-size: 20px;" name="desk2">Стол 2</button>
+                    {% if desks %}
+                        {% for desk in desks %}
+                            <button class="btn btn-success" type="submit" style="font-size: 20px;" value="{{ desk.id }}" name="button">{{ desk.name }}</button>
+                        {% endfor %}
+                    {% else %}
+                        <span>столов нет</span>
+
+                    {% endif %}
                 </div>
             </form>
         </div>

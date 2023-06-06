@@ -6,9 +6,10 @@ from PIL import Image
 import search
 import camera
 from analyse import Analyse
+from step.models import Desk
 
 
-def test(request):
+def analyse(request):
     
     # temp = []
     # while len(temp) < 2:  
@@ -24,19 +25,19 @@ def test(request):
     #     temp = search.search(img_np)
 
 
-    img_np = cv2.imread('4+2.png', 1)
-    temp = search.search(img_np)
+    # img_np = cv2.imread('4+2.png', 1)
+    # temp = search.search(img_np)
 
 
-    QRs = Analyse.search_qr_code(temp)
-    cords_ancle = Analyse.cords_ancle_board(QRs)
-    img_np, kletki, color, past_pole = Analyse.search_cell(cords_ancle, img_np)
-    color = Analyse.color_pixel(img_np, kletki, color)
-        
-    moves, step = Analyse.step(color, moves, past_pole) # moves массив прошлого хода
+    # QRs = Analyse.search_qr_code(temp)
+    # cords_ancle = Analyse.cords_ancle_board(QRs)
+    # img_np, kletki, color, past_pole = Analyse.search_cell(cords_ancle, img_np)
+    # color = Analyse.color_pixel(img_np, kletki, color)
+
+    # moves, step = Analyse.step(color, moves, past_pole) # moves массив прошлого хода
     # for key in kletki:
     #     cv2.putText(img_np, str(color[key]), kletki[key], cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 1)
     #     cv2.imwrite('res22.png', img_np)
     
 
-    return HttpResponse('ok')
+    return print('ok')

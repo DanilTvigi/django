@@ -34,8 +34,8 @@ urlpatterns = [
     path("Timer", main_views.Timer, name='Timer'),
     
     path("LoginGame", users_views.LoginGame, name='LoginGame'),
-    re_path(r"^PINGame", users_views.PINGame, name='PINGame'),
-    path('Desk',users_views.Desk, name='Desk'),
+    path("PINGame", users_views.PINGame, name='PINGame'),
+    re_path(r"^DeskGame",users_views.DeskGame, name='DeskGame'),
     path("Registration", users_views.Registration, name='Registration'),
     path("PersonalProfile?<int:id>", users_views.PersonalProfile, name='PersonalProfile'),
     path("PlayerProfile?<int:id>", users_views.PlayerProfile, name='PlayerProfile'),
@@ -47,6 +47,6 @@ urlpatterns = [
     path('Logout', auth_views.LogoutView.as_view(template_name='Home.html'), name='Logout'),
 
 
-    path('but', step_views.test, name='test'),
+    path('analyse', step_views.analyse, name='analyse'),
 ]
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-class desk(models.Model):
+class Desk(models.Model):
     name = models.CharField(max_length=15)
     ip = models.CharField(max_length=15)
     user = models.CharField(max_length=15)
