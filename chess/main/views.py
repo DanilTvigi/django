@@ -32,8 +32,7 @@ def GameHistoryPage(request):
 def Timer(request):
     filt_record = SessionConnection.objects.get(user2_id = request.user.id)
     min = filt_record.min
-    sec = filt_record.sec
-    data = {'min':min, 'sec':sec}
+    data = {'min':min}
     return render(request, 'Timer.html', context=data) 
 
 

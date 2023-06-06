@@ -39,5 +39,5 @@ def analyse(request):
     #     cv2.putText(img_np, str(color[key]), kletki[key], cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 1)
     #     cv2.imwrite('res22.png', img_np)
     
-
-    return print('ok')
+    print('ok')
+    return HttpResponse('ok')

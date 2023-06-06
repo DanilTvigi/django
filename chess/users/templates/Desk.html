@@ -3,24 +3,32 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-    <div class="container " style="width: 450px; padding-top: 50px;">
+    <div class="container " style="width: 600px; padding-top: 50px;">
+    {% if desks %}
         <div class="align-content-center">
             <h2 class="text-center">Выберите стол</h2>
             <form method="POST" class="text-center" action="{% url 'PINGame' %}">
                 {% csrf_token %}
                 <div class="form-group">
-                    {% if desks %}
+                    
                         {% for desk in desks %}
                             <button class="btn btn-success" type="submit" style="font-size: 20px;" value="{{ desk.id }}" name="button">{{ desk.name }}</button>
                         {% endfor %}
-                    {% else %}
-                        <span>столов нет</span>
 
-                    {% endif %}
+                    
                 </div>
             </form>
         </div>
+    {% else %}
+        <div class="alert alert-warning text-center" role="alert" style="margin-top: 25px;">
+            {{ message }} {{ pin }}
+        </div>
+    {% endif %}
     </div>
+
+
+        
+
 {% endblock content %}
 {% block script %}
     <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 

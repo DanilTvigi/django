@@ -121,15 +121,30 @@ const startTimer = () => {
 
 
 // Слушатель события клика на панели таймера для смены игрока
-timerPanel.addEventListener('click', swapPlayer)
-   
-// Слушатель события нажатия клавиши пробела для смены игрока
-document.addEventListener('keypress', event => {
-    if (event.keyCode === 32 || event.which === 32) {
-        swapPlayer();
-    }
+timerPanel.addEventListener('click', function(){
+    swapPlayer();
+    callDjangoView();
 });
 
+   
+// Слушатель события нажатия клавиши пробела для смены игрока
+document.addEventListener('keypress', function(event) {
+    if (event.keyCode === 32 || event.which === 32) {
+        swapPlayer();
+        callDjangoView();
+    }
+});
+  
+function callDjangoView() {
+    // Создаем AJAX-запрос
+    var xhr = new XMLHttpRequest();
+  
+    // Определяем тип запроса и URL представления Django
+    xhr.open('GET', 'analyse', true);
+  
+    // Отправляем запрос на сервер
+    xhr.send();
+}
 
 
 
