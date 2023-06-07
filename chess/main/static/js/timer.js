@@ -134,13 +134,15 @@ document.addEventListener('keypress', function(event) {
         callDjangoView();
     }
 });
-  
+var variableValue = 0;
 function callDjangoView() {
+    variableValue = variableValue + 1
     // Создаем AJAX-запрос
     var xhr = new XMLHttpRequest();
   
     // Определяем тип запроса и URL представления Django
-    xhr.open('GET', 'analyse', true);
+    var url = '/analyse?variable=' + encodeURIComponent(variableValue);
+    xhr.open('GET', url, true);
   
     // Отправляем запрос на сервер
     xhr.send();
@@ -159,6 +161,7 @@ for (let i = 0; i < buttons.length; i++) {
         } else {
             // Reset everything by reloading the page.
             location.reload(true); // Перезагрузка страницы для сброса всех значений
+            variableValue = 0;
         }
     });
 }

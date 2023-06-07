@@ -31,7 +31,7 @@ urlpatterns = [
     path("PlayerRating", main_views.PlayerRating, name='PlayerRating'),
     path("GameHistoryPage", main_views.GameHistoryPage, name='GameHistory'),
     
-    path("Timer", main_views.Timer, name='Timer'),
+    re_path(r"^Timer", main_views.Timer, name='Timer'),
     
     path("LoginGame", users_views.LoginGame, name='LoginGame'),
     path("PINGame", users_views.PINGame, name='PINGame'),

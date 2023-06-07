@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-
 from users.models import SessionConnection, CustomUser
 from main.models import GameHistory
 from step.models import Desk
@@ -89,7 +88,8 @@ def LoginGame(request):
     if request.method == 'GET':
         return render(request, 'LoginGame.html')
     if request.method == 'POST':
-         pin_input = request.POST.get("pin", "Undefined")
+        pin_input = request.POST.get("pin", "Undefined")
+        request.session['pin'] = pin_input
     is_exists = SessionConnection.objects.filter(pin_game=pin_input).exists()
     if is_exists:
         filt_record = SessionConnection.objects.get(pin_game=pin_input)
