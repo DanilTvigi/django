@@ -5,23 +5,23 @@ import numpy as np
 from analyse import Analyse
 from PIL import Image
 temp = []
-# while len(temp) < 2:
+while len(temp) < 1:
 
-#     img = camera.get_img("10.2.31.25","admin","Skills39!", True)
-#     tmp = bytes()
-#     for t in img:
-#         tmp += t
-#     nparr = np.frombuffer(tmp, np.uint8)
-#     img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-#     cv2.imwrite('tmp.png', img_np)
-#     img_np = cv2.imread('tmp.png', 1)
-#     temp = search.search(img_np)
+    img = camera.get_img("10.2.31.25","admin","Skills39!", True)
+    tmp = bytes()
+    for t in img:
+        tmp += t
+    nparr = np.frombuffer(tmp, np.uint8)
+    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    cv2.imwrite('tmp.png', img_np)
+    img_np = cv2.imread('tmp.png', 1)
+    temp = search.search(img_np)
 # print(len(temp))
 
 # print(temp)
 
-img_np = cv2.imread('3+1+2.png', 1)
-temp = search.search(img_np)
+# img_np = cv2.imread('3+1+2.png', 1)
+# temp = search.search(img_np)
 
 
 QRs = Analyse.search_qr_code(temp)

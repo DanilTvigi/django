@@ -48,5 +48,7 @@ urlpatterns = [
 
 
     path('analyse', step_views.analyse, name='analyse'),
+
+    path("ViewGame?<int:pin>", step_views.ViewGame, name='ViewGame')
 ]
 

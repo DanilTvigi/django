@@ -7,25 +7,25 @@ class Analyse:
         QRs = {}
         for w in temp:
             if   w.data == b"1":
-                # print("1")
+                print("1")
                 x = max(list(map(lambda a: a.x, w.polygon)))
                 y = min(list(map(lambda a: a.y, w.polygon)))
                 QRs['1'] = [x,y]
             elif w.data == b"2":
-                # print("2")
+                print("2")
                 x = max(list(map(lambda a: a.x, w.polygon)))
                 y = max(list(map(lambda a: a.y, w.polygon)))
                 QRs['2'] = [x,y]
                 
             elif w.data == b"3":
-                # print("3")
+                print("3")
                 x = min(list(map(lambda a: a.x, w.polygon)))
                 y = max(list(map(lambda a: a.y, w.polygon)))
                 QRs['3'] = [x,y]
                 
                 
             elif w.data == b"4":
-                # print("4")
+                print("4")
                 x = min(list(map(lambda a: a.x, w.polygon)))
                 y = min(list(map(lambda a: a.y, w.polygon)))
                 QRs['4'] = [x,y]
@@ -81,11 +81,12 @@ class Analyse:
         return cords_ancle
     
 
-    def search_cell(cords_ancle, img_np):
+    def search_cell(cords_ancle):
         kletki = dict()
         color = dict()
-        past_pole =  dict()
-        #[[651, 942], [651, 350], [1225, 350], [1225, 942]]
+        print(cords_ancle)
+        print(cords_ancle[0][1])
+        print(cords_ancle[1][1])
         v = cords_ancle[0][1] - cords_ancle[1][1]
         g = cords_ancle[2][0] - cords_ancle[1][0]
 
@@ -186,8 +187,7 @@ class Analyse:
             for j in letter:
                 mark = j + str(i)
                 kletki[mark] = ''
-                color[mark] = ''
-                past_pole[mark] = ''
+                color[mark] = 0
                 chet += 1
 
         for key in kletki:
@@ -199,18 +199,8 @@ class Analyse:
                 kletki[key] = quarter3[key]
             elif key in quarter4.keys():
                 kletki[key] = quarter4[key]
-            
-
-        # for key in cords_quarter4:
-        #     x, y = key
-        #     cv2.rectangle(img_np, (x, y), (x+50,y+50), (0,0,255), 2)
-
-        # for key in kletki:
-        #     x, y = kletki[key]
-        #     cv2.rectangle(img_np, (x, y), (x+50,y+50), (0,0,255), 2)
-
-        cv2.imwrite('res.png', img_np)
-        return img_np, kletki, color, past_pole
+        # cv2.imwrite('res.png', img_np)
+        return kletki, color
     
     def color_pixel(img_np, kletki, color):
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
@@ -228,57 +218,37 @@ class Analyse:
                     sum_r += r
                     sum_g += g
                     sum_b += b
-            # color[key] = round((sum_r / 55) + (sum_g / 55) + (sum_b / 55))
             if round((sum_r / 45) + (sum_g / 45) + (sum_b / 45)) > 1000:
                 color[key] = 1
             else:
                 color[key] = 0
         return color
     
-    def step(color, moves, past_pole):
-        lenght = len(moves)
-        # past_pole = {'A1': 'WR', 'B1': 'WH', 'C1': 'WB', 'D1': 'WQ', 'E1': 'WK', 'F1': 'WB', 'G1': 'WH', 'H1': 'WR', 
-        #             'A2': 'WP', 'B2': 'WP', 'C2': 'WP', 'D2': 'WP', 'E2': 'WP', 'F2': 'WP', 'G2': 'WP', 'H2': 'WP', 
-        #             'A3': '', 'B3': '', 'C3': '', 'D3': '', 'E3': '', 'F3': '', 'G3': '', 'H3': '', 
-        #             'A4': '', 'B4': '', 'C4': '', 'D4': '', 'E4': '', 'F4': '', 'G4': '', 'H4': '', 
-        #             'A5': '', 'B5': '', 'C5': '', 'D5': '', 'E5': '', 'F5': '', 'G5': '', 'H5': '', 
-        #             'A6': '', 'B6': '', 'C6': '', 'D6': '', 'E6': '', 'F6': '', 'G6': '', 'H6': '', 
-        #             'A7': 'BP', 'B7': 'BP', 'C7': 'BP', 'D7': 'BP', 'E7': 'BP', 'F7': 'BP', 'G7': 'BP', 'H7': 'BP', 
-        #             'A8': 'BR', 'B8': 'BH', 'C8': 'BB', 'D8': 'BQ', 'E8': 'BK', 'F8': 'BB', 'G8': 'BH', 'H8': 'BR'}
-
-
-        for i in range(lenght):
-            past_pole[i]=moves[i]
-
-        # past_pole = {'A1': '1', 'B1': '1', 'C1': '1', 'D1': '1', 'E1': '1', 'F1': '1', 'G1': '1', 'H1': '1', 
-        #              'A2': '1', 'B2': '1', 'C2': '1', 'D2': '1', 'E2': '1', 'F2': '1', 'G2': '1', 'H2': '1', 
-        #              'A3': '0', 'B3': '0', 'C3': '0', 'D3': '0', 'E3': '0', 'F3': '0', 'G3': '0', 'H3': '0', 
-        #              'A4': '0', 'B4': '0', 'C4': '0', 'D4': '0', 'E4': '0', 'F4': '0', 'G4': '0', 'H4': '0', 
-        #              'A5': '0', 'B5': '0', 'C5': '0', 'D5': '0', 'E5': '0', 'F5': '0', 'G5': '0', 'H5': '0', 
-        #              'A6': '0', 'B6': '0', 'C6': '0', 'D6': '0', 'E6': '0', 'F6': '0', 'G6': '0', 'H6': '0', 
-        #              'A7': '1', 'B7': '1', 'C7': '1', 'D7': '1', 'E7': '1', 'F7': '1', 'G7': '1', 'H7': '1', 
-        #              'A8': '1', 'B8': '1', 'C8': '1', 'D8': '1', 'E8': '1', 'F8': '1', 'G8': '1', 'H8': '1'}
+    def step(color, moves):
         
-        current_pole = color
+        past_pole = {'a1': 2, 'b1': 2, 'c1': 2, 'd1': 2, 'e1': 2, 'f1': 2, 'g1': 2, 'h1': 2, 
+                     'a2': 2, 'b2': 2, 'c2': 2, 'd2': 2, 'e2': 2, 'f2': 2, 'g2': 2, 'h2': 2, 
+                     'a3': 2, 'b3': 2, 'c3': 2, 'd3': 2, 'e3': 2, 'f3': 2, 'g3': 2, 'h3': 2, 
+                     'a4': 2, 'b4': 2, 'c4': 2, 'd4': 2, 'e4': 2, 'f4': 2, 'g4': 2, 'h4': 2, 
+                     'a5': 2, 'b5': 2, 'c5': 2, 'd5': 2, 'e5': 2, 'f5': 2, 'g5': 2, 'h5': 2, 
+                     'a6': 2, 'b6': 2, 'c6': 2, 'd6': 2, 'e6': 2, 'f6': 2, 'g6': 2, 'h6': 2, 
+                     'a7': 2, 'b7': 2, 'c7': 2, 'd7': 2, 'e7': 2, 'f7': 2, 'g7': 2, 'h7': 2, 
+                     'a8': 2, 'b8': 2, 'c8': 2, 'd8': 2, 'e8': 2, 'f8': 2, 'g8': 2, 'h8': 2}
+
+        keys = list(past_pole.keys())  
+        for i in range(len(keys)):
+            past_pole[keys[i]] = int(moves[i])
 
         past_cell, new_cell = '', ''
         step = ''
-
-        for key in current_pole:
-            if current_pole[key] == past_pole[key]:
-                continue
-            else:
-                if current_pole[key] == '0':
-                    past_cell = key
-                    past_pole[key] = '0' 
-                elif current_pole[key] == '1':
+        for key in color:
+            if color[key] != past_pole[key]:
+                if color[key] == 1:
                     new_cell = key
-                    past_pole[key] = '1'
-            if past_cell != '' and new_cell != '':
-                break
+                else:
+                    past_cell = key
         step = past_cell + new_cell
-        
-        for i in range(lenght):
-            moves[i]=past_pole[i]
-
+        past_pole[new_cell] = 1
+        past_pole[past_cell] = 0
+        moves = ''.join(str(value) for value in past_pole.values())
         return moves, step

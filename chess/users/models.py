@@ -22,7 +22,8 @@ class SessionConnection(models.Model):
     desk = models.IntegerField()
     min = models.CharField(max_length=3)
     # sec = models.CharField(max_length=2)
-    delete_time = models.DateTimeField(null=True, blank=True)   
+    delete_time = models.DateTimeField(null=True, blank=True)
+    cords_ancle = models.CharField(max_length=200)   
 
 
 

@@ -20,11 +20,12 @@
         <tbody>
             {% for game in games %}
             <tr>
-                <td class="text-center"><a href="PlayerProfile" class="link_in_table">{{ game.username_W }}</a></td>
-                <td class="text-center"><a href="PlayerProfile" class="link_in_table">{{ game.username_B }}</a></td>
-                <td class="text-center"><a href="PlayerProfile" class="link_in_table">{{ game.result }}</a></td>
+                <td class="text-center"><a href="{% url 'PlayerProfile' game.user_W_id %}" class="link_in_table">{{ game.username_W }}</a></td>
+                <td class="text-center"><a href="{% url 'PlayerProfile' game.user_B_id %}" class="link_in_table">{{ game.username_B }}</a></td>
+                <td class="text-center">{{ game.result }}</td>
                 <td class="text-center">{{ game.dateTime }}</td>
                 <td class="text-center">{{ game.lenght_game }}</td>
+                <td class="text-center"><a href="{% url 'ViewGame' game.pin_game %}" class="link_in_table">Просмотр игры</a></td>
             </tr>
             {% endfor %}
             

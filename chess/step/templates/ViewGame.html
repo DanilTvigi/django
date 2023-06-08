@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+
+<div class="container" style="padding: 25px 0 0 0;"">
+    <div class=" row align-content-center">
+  <div class="col-sm-3 text-center">
+    <br><br>
+    <a class="nav-link" style="font-weight: 700; color: #111;" href="#">1 player</a>
+  </div>
+  <div class="col">
+    <chess-board position="start"> </chess-board>
+  </div>
+  <div class="col-sm-3 text-center">
+    <br><br>
+    <a class="nav-link player-link" style="font-weight: 700; color: #111;" href="#">2 player</a>
+    <button type="button" id="btn-back" class="btn btn-warning">back</button>
+    <button type="button" id="btn-next" class="btn btn-success">next</button>
+  </div>
+</div>
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="module" src="{% static 'js/main.js' %}"></script>
+<script type="module" src="/node_modules/chessboard-element/index.js"></script>
+<script type="module" src="https://unpkg.com/chessboard-element?module"></script>
+{% endblock script %}

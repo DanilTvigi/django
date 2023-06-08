@@ -8,6 +8,12 @@ from .forms import CustomLoginForm
 from django.contrib.auth import authenticate, login
 import random
 from datetime import datetime, timedelta
+from step.models import Steps
+import search
+import camera
+from analyse import Analyse
+import cv2
+import numpy as np
 
 
 
@@ -64,6 +70,7 @@ def PersonalProfile(request, id):
 
 
 def PlayerProfile(request, id):
+    print(id)
     user_record = CustomUser.objects.get(id=id)
     username = user_record.username 
     play_count = user_record.play_count
@@ -97,14 +104,32 @@ def LoginGame(request):
         user2 = filt_record.user2_id
         curent_user = request.user.id
         if user1 != curent_user and user2 == None and user2 != curent_user:
+            a = True
+            while(a):
+                temp = []
+                while len(temp) < 2:  
+                    print('1')
+                    img = camera.get_img("10.2.31.25","admin","Skills39!", True)
+                    tmp = bytes()
+                    for t in img:
+                        tmp += t
+                    nparr = np.frombuffer(tmp, np.uint8)
+                    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    cv2.imwrite('tmp.png', img_np)
+                    img_np = cv2.imread('tmp.png', 1)
+                    temp = search.search(img_np)  
+                QRs = Analyse.search_qr_code(temp)
+                cords_ancle = Analyse.cords_ancle_board(QRs)
+
+                if cords_ancle:
+                    a = False  
+            request.session['cords_ancle'] = cords_ancle
             filt_record.user2_id = curent_user
             filt_record.save()
             name1 = CustomUser.objects.get(id=user1)
             name2 = CustomUser.objects.get(id=curent_user)
             username_W = name1.username
-            print(username_W)
             username_B = name2.username
-            print(username_B)
             new_record = GameHistory.objects.create(user_W_id=user1,
                                                     username_W=username_W,
                                                     user_B_id=curent_user,
@@ -113,6 +138,16 @@ def LoginGame(request):
                                                     pin_game = pin_input,
                                                     dateTime=datetime.now(),
                                                     lenght_game=0)
+            moves = ('1') * 16 + ('0') * 32 + ('1') * 16
+            new_record = Steps.objects.create(pin_game=pin_input,
+                                              queue_step=0,
+                                              moves=moves,
+                                              user_id_W=user1,
+                                              user_id_B=curent_user,
+                                              step=0,
+                                              time=datetime.now())
+
+
             return redirect('Timer')
         else:
             data = {'message' : 'Комната заполнена или вы уже в ней!'}
@@ -156,6 +191,7 @@ def PINGame(request):
         pin = filt_record.pin_game
         data = {'pin' : pin, 'message':"У Вас уже имеется созданная игровая сессия, вот ее номер"} 
     else:
+       
         random_number = generate_random_number()
         delete_time = datetime.now() + timedelta(seconds=15)
         new_record = SessionConnection.objects.create(pin_game=random_number, 
@@ -164,7 +200,8 @@ def PINGame(request):
                                                         min = min,
                                                     #   sec = sec,
                                                         delete_time=delete_time,
-                                                        desk = button_value)
+                                                        desk = button_value,
+                                                        cords_ancle=0)
         data = {'pin' : random_number}  
         return render(request, 'PINGame.html', context=data)
 

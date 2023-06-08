@@ -24,4 +24,4 @@ class Steps(models.Model):
     user_id_W = models.IntegerField(default=5)
     user_id_B = models.IntegerField(default=5)
     step = models.CharField(max_length=10)
-    time = models.IntegerField()
+    time = models.DateTimeField()
