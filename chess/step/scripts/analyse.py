@@ -84,9 +84,6 @@ class Analyse:
     def search_cell(cords_ancle):
         kletki = dict()
         color = dict()
-        print(cords_ancle)
-        print(cords_ancle[0][1])
-        print(cords_ancle[1][1])
         v = cords_ancle[0][1] - cords_ancle[1][1]
         g = cords_ancle[2][0] - cords_ancle[1][0]
 
@@ -110,7 +107,7 @@ class Analyse:
             for j in range(ref_point1[0], centre[0]+step_g, step_g):
                 s += 1
                 if s>4: break
-                cord = j+5, i+3
+                cord = j+5, i+20
                 cords_quarter1.append(cord)
         # print('1')
         # print(cords_quarter1)
@@ -130,7 +127,7 @@ class Analyse:
             for j in range(ref_point2[0], centre[0]-step_g, -step_g):
                 s += 1
                 if s>4: break
-                cord = j-55, i+10
+                cord = j-55, i-10
                 cords_quarter2.append(cord)
         # print('2')
         # print(cords_quarter2)
@@ -171,7 +168,7 @@ class Analyse:
             for j in range(ref_point4[0], centre[0]-step_g, -step_g):
                 s += 1
                 if s>4: break
-                cord = j-55, i-55
+                cord = j-65, i-65
                 cords_quarter4.append(cord)
         # print('4')
         # print(cords_quarter4)
@@ -183,13 +180,12 @@ class Analyse:
 
         letter = ['a','b','c','d','e','f','g','h']
         chet = 0 
-        for i in range(1,9):
+        for i in range(8,0, -1):
             for j in letter:
                 mark = j + str(i)
                 kletki[mark] = ''
                 color[mark] = 0
                 chet += 1
-
         for key in kletki:
             if key in quarter1.keys():
                 kletki[key] = quarter1[key]
@@ -199,41 +195,56 @@ class Analyse:
                 kletki[key] = quarter3[key]
             elif key in quarter4.keys():
                 kletki[key] = quarter4[key]
-        # cv2.imwrite('res.png', img_np)
-        return kletki, color
+        
+        return kletki, color, step_v, step_g
     
-    def color_pixel(img_np, kletki, color):
+    def color_pixel(img_np, kletki, color, step_v, step_g):
+        # test = img_np
+        # # for key in kletki:
+        # #     x, y = kletki[key]
+        # #     cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+        # x, y = kletki['f8']
+        # cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+
+        # cv2.imwrite('test.png', test)
+        test_color = {'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0, 'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0, 'a7': 0, 'b7': 0, 'c7': 0, 'd7': 0, 'e7': 0, 'f7': 0, 'g7': 0, 'h7': 0, 'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0, 'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0, 'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0, 'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0, 'a2': 0, 'b2': 0, 'c2': 0, 'd2': 0, 'e2': 0, 'f2': 0, 'g2': 0, 'h2': 0, 'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0, 'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0}
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
-        # ret, thresh1 = cv2.threshold(img_gray, 200, 300, cv2.THRESH_BINARY)
-        edges_K = cv2.Canny(img_gray,120,400)
+        # ret, threshold = cv2.threshold(img_gray, 99, 255, cv2.THRESH_BINARY)
+        # inverted = cv2.bitwise_not(threshold)
+        blurred = cv2.GaussianBlur(img_gray, (11,11), 0)
+        edges_K = cv2.Canny(blurred,0, 85)    # 0 50  5 85
         cv2.imwrite('res2.png', edges_K)
         img = Image.open('res2.png')
         img = img.convert('RGB')    
         for key in kletki:
             sum_r, sum_g, sum_b = 0,0,0
-            for i in range(0,55,1):
-                for j in range(0,55,1):
+            for i in range(0,50,1):
+                for j in range(0,50,1):
                     x, y = kletki[key]
                     r, g, b = img.getpixel((x + i, y + j))
                     sum_r += r
                     sum_g += g
                     sum_b += b
-            if round((sum_r / 45) + (sum_g / 45) + (sum_b / 45)) > 1000:
+            test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
+            
+            if round((sum_r / 50) + (sum_g / 50) + (sum_b / 50)) > 850:
                 color[key] = 1
             else:
                 color[key] = 0
+        print(color)
+        print(test_color)
         return color
     
     def step(color, moves):
         
-        past_pole = {'a1': 2, 'b1': 2, 'c1': 2, 'd1': 2, 'e1': 2, 'f1': 2, 'g1': 2, 'h1': 2, 
-                     'a2': 2, 'b2': 2, 'c2': 2, 'd2': 2, 'e2': 2, 'f2': 2, 'g2': 2, 'h2': 2, 
-                     'a3': 2, 'b3': 2, 'c3': 2, 'd3': 2, 'e3': 2, 'f3': 2, 'g3': 2, 'h3': 2, 
-                     'a4': 2, 'b4': 2, 'c4': 2, 'd4': 2, 'e4': 2, 'f4': 2, 'g4': 2, 'h4': 2, 
-                     'a5': 2, 'b5': 2, 'c5': 2, 'd5': 2, 'e5': 2, 'f5': 2, 'g5': 2, 'h5': 2, 
+        past_pole = {'a8': 2, 'b8': 2, 'c8': 2, 'd8': 2, 'e8': 2, 'f8': 2, 'g8': 2, 'h8': 2,
+                     'a7': 2, 'b7': 2, 'c7': 2, 'd7': 2, 'e7': 2, 'f7': 2, 'g7': 2, 'h7': 2,
                      'a6': 2, 'b6': 2, 'c6': 2, 'd6': 2, 'e6': 2, 'f6': 2, 'g6': 2, 'h6': 2, 
-                     'a7': 2, 'b7': 2, 'c7': 2, 'd7': 2, 'e7': 2, 'f7': 2, 'g7': 2, 'h7': 2, 
-                     'a8': 2, 'b8': 2, 'c8': 2, 'd8': 2, 'e8': 2, 'f8': 2, 'g8': 2, 'h8': 2}
+                     'a5': 2, 'b5': 2, 'c5': 2, 'd5': 2, 'e5': 2, 'f5': 2, 'g5': 2, 'h5': 2, 
+                     'a4': 2, 'b4': 2, 'c4': 2, 'd4': 2, 'e4': 2, 'f4': 2, 'g4': 2, 'h4': 2,
+                     'a3': 2, 'b3': 2, 'c3': 2, 'd3': 2, 'e3': 2, 'f3': 2, 'g3': 2, 'h3': 2,
+                     'a2': 2, 'b2': 2, 'c2': 2, 'd2': 2, 'e2': 2, 'f2': 2, 'g2': 2, 'h2': 2,
+                     'a1': 2, 'b1': 2, 'c1': 2, 'd1': 2, 'e1': 2, 'f1': 2, 'g1': 2, 'h1': 2}
 
         keys = list(past_pole.keys())  
         for i in range(len(keys)):
@@ -251,4 +262,13 @@ class Analyse:
         past_pole[new_cell] = 1
         past_pole[past_cell] = 0
         moves = ''.join(str(value) for value in past_pole.values())
+        letter = ['a','b','c','d','e','f','g','h']
+        chet = 0 
+        # for i in range(8,0, -1):
+        #     for j in letter:
+        #         mark = j + str(i)
+        #         print(mark, moves[chet])
+        #         chet += 1
+        print(step)
+        
         return moves, step

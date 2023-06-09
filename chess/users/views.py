@@ -117,12 +117,13 @@ def LoginGame(request):
                     img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                     cv2.imwrite('tmp.png', img_np)
                     img_np = cv2.imread('tmp.png', 1)
-                    temp = search.search(img_np)  
+                    temp = search.search(img_np) 
                 QRs = Analyse.search_qr_code(temp)
                 cords_ancle = Analyse.cords_ancle_board(QRs)
 
                 if cords_ancle:
                     a = False  
+            
             request.session['cords_ancle'] = cords_ancle
             filt_record.user2_id = curent_user
             filt_record.save()

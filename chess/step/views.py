@@ -15,7 +15,6 @@ from django.shortcuts import render, redirect
 
 
 def analyse(request):
-    
     img = camera.get_img("10.2.31.25","admin","Skills39!", True)
     tmp = bytes()
     for t in img:
@@ -25,9 +24,6 @@ def analyse(request):
     cv2.imwrite('tmp.png', img_np)
     img_np = cv2.imread('tmp.png', 1)
 
-
-    # img_np = cv2.imread('4+2.png', 1)
-    # temp = search.search(img_np)
     # color = {'a1': 1, 'b1': 1, 'c1': 1, 'd1': 1, 'e1': 1, 'f1': 1, 'g1': 1, 'h1': 1, 
     #                  'a2': 0, 'b2': 1, 'c2': 0, 'd2': 1, 'e2': 1, 'f2': 1, 'g2': 1, 'h2': 1, 
     #                  'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0, 
@@ -43,8 +39,8 @@ def analyse(request):
     # cords_ancle = list(cords.cords_ancle)
     cords_ancle = request.session.get('cords_ancle')
 
-    kletki, color = Analyse.search_cell(cords_ancle)
-    color = Analyse.color_pixel(img_np, kletki, color)
+    kletki, color, step_v, step_g = Analyse.search_cell(cords_ancle)
+    color = Analyse.color_pixel(img_np, kletki, color, step_v, step_g)
     steps = Steps.objects.filter(pin_game=pin_game).order_by('-queue_step')
     y = steps.first()
     moves = y.moves
