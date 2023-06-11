@@ -44,12 +44,16 @@ def analyse(request):
     steps = Steps.objects.filter(pin_game=pin_game).order_by('-queue_step')
     y = steps.first()
     moves = y.moves
-    moves, step = Analyse.step(color, moves) # moves массив прошлого хода
+    queue_step = request.GET.get("variable")
+    location_figur = request.session.get('location_figur')
+    moves, step, location_figur = Analyse.step(color, moves, location_figur, queue_step) # moves массив прошлого хода
+    print('location figure')
+    print(location_figur)
+    request.session['location_figur'] = location_figur
     record = SessionConnection.objects.get(pin_game=pin_game)
     user_id_W = record.user1_id
     user_id_B = record.user2_id
     time = datetime.now()
-    queue_step = request.GET.get("variable")
 
 
 

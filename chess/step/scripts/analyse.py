@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
+import copy
 
 class Analyse:
     def search_qr_code(temp):
@@ -207,7 +208,8 @@ class Analyse:
         # cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
 
         # cv2.imwrite('test.png', test)
-        test_color = {'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0, 'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0, 'a7': 0, 'b7': 0, 'c7': 0, 'd7': 0, 'e7': 0, 'f7': 0, 'g7': 0, 'h7': 0, 'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0, 'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0, 'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0, 'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0, 'a2': 0, 'b2': 0, 'c2': 0, 'd2': 0, 'e2': 0, 'f2': 0, 'g2': 0, 'h2': 0, 'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0, 'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0}
+        test_color = copy.deepcopy(color)
+
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
         # ret, threshold = cv2.threshold(img_gray, 99, 255, cv2.THRESH_BINARY)
         # inverted = cv2.bitwise_not(threshold)
@@ -218,6 +220,7 @@ class Analyse:
         img = img.convert('RGB')    
         for key in kletki:
             sum_r, sum_g, sum_b = 0,0,0
+            total_brightness = 0
             for i in range(0,50,1):
                 for j in range(0,50,1):
                     x, y = kletki[key]
@@ -225,31 +228,57 @@ class Analyse:
                     sum_r += r
                     sum_g += g
                     sum_b += b
-            test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
-            
-            if round((sum_r / 50) + (sum_g / 50) + (sum_b / 50)) > 850:
+                    
+            if round((sum_r / 50) + (sum_g / 50) + (sum_b / 50)) > 750:
                 color[key] = 1
             else:
                 color[key] = 0
+            test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
+        print('1')
         print(color)
-        print(test_color)
+
         return color
     
-    def step(color, moves):
-        
-        past_pole = {'a8': 2, 'b8': 2, 'c8': 2, 'd8': 2, 'e8': 2, 'f8': 2, 'g8': 2, 'h8': 2,
-                     'a7': 2, 'b7': 2, 'c7': 2, 'd7': 2, 'e7': 2, 'f7': 2, 'g7': 2, 'h7': 2,
-                     'a6': 2, 'b6': 2, 'c6': 2, 'd6': 2, 'e6': 2, 'f6': 2, 'g6': 2, 'h6': 2, 
-                     'a5': 2, 'b5': 2, 'c5': 2, 'd5': 2, 'e5': 2, 'f5': 2, 'g5': 2, 'h5': 2, 
-                     'a4': 2, 'b4': 2, 'c4': 2, 'd4': 2, 'e4': 2, 'f4': 2, 'g4': 2, 'h4': 2,
-                     'a3': 2, 'b3': 2, 'c3': 2, 'd3': 2, 'e3': 2, 'f3': 2, 'g3': 2, 'h3': 2,
-                     'a2': 2, 'b2': 2, 'c2': 2, 'd2': 2, 'e2': 2, 'f2': 2, 'g2': 2, 'h2': 2,
-                     'a1': 2, 'b1': 2, 'c1': 2, 'd1': 2, 'e1': 2, 'f1': 2, 'g1': 2, 'h1': 2}
+    def step(color, moves, location_figur, queue_step):   
 
+        # past_pole = {'a8': 2, 'b8': 2, 'c8': 2, 'd8': 2, 'e8': 2, 'f8': 2, 'g8': 2, 'h8': 2,
+        #              'a7': 2, 'b7': 2, 'c7': 2, 'd7': 2, 'e7': 2, 'f7': 2, 'g7': 2, 'h7': 2,
+        #              'a6': 2, 'b6': 2, 'c6': 2, 'd6': 2, 'e6': 2, 'f6': 2, 'g6': 2, 'h6': 2, 
+        #              'a5': 2, 'b5': 2, 'c5': 2, 'd5': 2, 'e5': 2, 'f5': 2, 'g5': 2, 'h5': 2, 
+        #              'a4': 2, 'b4': 2, 'c4': 2, 'd4': 2, 'e4': 2, 'f4': 2, 'g4': 2, 'h4': 2,
+        #              'a3': 2, 'b3': 2, 'c3': 2, 'd3': 2, 'e3': 2, 'f3': 2, 'g3': 2, 'h3': 2,
+        #              'a2': 2, 'b2': 2, 'c2': 2, 'd2': 2, 'e2': 2, 'f2': 2, 'g2': 2, 'h2': 2,
+        #              'a1': 2, 'b1': 2, 'c1': 2, 'd1': 2, 'e1': 2, 'f1': 2, 'g1': 2, 'h1': 2}
+        past_pole = copy.deepcopy(color)
+        tmp_location_figur = copy.deepcopy(location_figur)
+        print('tmp_location_figur')
+        print(tmp_location_figur)
+        if int(queue_step) % 2 != 0: #ход белых
+            for key in tmp_location_figur.keys():
+                if tmp_location_figur[key].startswith("W") or tmp_location_figur[key] == '':
+                    continue
+                else:
+                    color[key] = 0
+                    tmp_location_figur[key] = ''
+        else:
+            for key in tmp_location_figur.keys():
+                if tmp_location_figur[key].startswith("B") or tmp_location_figur[key] == '':
+                    continue
+                else:
+                    color[key] = 0
+                    tmp_location_figur[key] = ''
+        print('color')  
+        print(color)
+        print('tmp_location_figur')
+        print(tmp_location_figur)
         keys = list(past_pole.keys())  
         for i in range(len(keys)):
-            past_pole[keys[i]] = int(moves[i])
-
+            if tmp_location_figur[keys[i]] == '':
+                past_pole[keys[i]] = 0
+                continue
+            else:
+                # past_pole[keys[i]] = int(moves[i])
+                past_pole[keys[i]] = 1
         past_cell, new_cell = '', ''
         step = ''
         for key in color:
@@ -259,16 +288,21 @@ class Analyse:
                 else:
                     past_cell = key
         step = past_cell + new_cell
+        print(step)
+        tmp_location_figur[new_cell] = tmp_location_figur[past_cell]
+        tmp_location_figur[past_cell] = ''
+        print('tmp_location_figur')
+        print(tmp_location_figur)
+        for key in tmp_location_figur.keys():
+            if (tmp_location_figur[key].startswith("B") and (location_figur[key] == '' or location_figur[key].startswith("W"))) or (tmp_location_figur[key].startswith("W") and (location_figur[key] == '' or location_figur[key].startswith("B"))):
+                location_figur[key] = tmp_location_figur[key]
+            elif key == past_cell:
+                if (tmp_location_figur[key].startswith('') and (location_figur[key] == "B" or location_figur[key].startswith("W"))) or (tmp_location_figur[key].startswith('') and (location_figur[key] == "W" or location_figur[key].startswith("B"))):
+                    location_figur[key] = tmp_location_figur[key] 
+
+        step = past_cell + new_cell
         past_pole[new_cell] = 1
         past_pole[past_cell] = 0
         moves = ''.join(str(value) for value in past_pole.values())
-        letter = ['a','b','c','d','e','f','g','h']
-        chet = 0 
-        # for i in range(8,0, -1):
-        #     for j in letter:
-        #         mark = j + str(i)
-        #         print(mark, moves[chet])
-        #         chet += 1
-        print(step)
         
-        return moves, step
+        return moves, step, location_figur

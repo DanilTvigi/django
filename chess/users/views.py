@@ -105,26 +105,38 @@ def LoginGame(request):
         curent_user = request.user.id
         if user1 != curent_user and user2 == None and user2 != curent_user:
             a = True
-            while(a):
-                temp = []
-                while len(temp) < 2:  
-                    print('1')
-                    img = camera.get_img("10.2.31.25","admin","Skills39!", True)
-                    tmp = bytes()
-                    for t in img:
-                        tmp += t
-                    nparr = np.frombuffer(tmp, np.uint8)
-                    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                    cv2.imwrite('tmp.png', img_np)
-                    img_np = cv2.imread('tmp.png', 1)
-                    temp = search.search(img_np) 
-                QRs = Analyse.search_qr_code(temp)
-                cords_ancle = Analyse.cords_ancle_board(QRs)
+            while True:
+                try:
+                    temp = []
+                    while len(temp) < 2:  
+                        print('1')
+                        img = camera.get_img("10.2.31.25","admin","Skills39!", True)
+                        tmp = bytes()
+                        for t in img:
+                            tmp += t
+                        nparr = np.frombuffer(tmp, np.uint8)
+                        img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                        cv2.imwrite('tmp.png', img_np)
+                        img_np = cv2.imread('tmp.png', 1)
+                        temp = search.search(img_np) 
+                    QRs = Analyse.search_qr_code(temp)
+                    cords_ancle = Analyse.cords_ancle_board(QRs)
+                    kletki, color, step_v, step_g = Analyse.search_cell(cords_ancle)
+                    break
+                except Exception as a:
+                     continue
 
-                if cords_ancle:
-                    a = False  
-            
+             
+            location_figur = {'a8': 'WR', 'b8': 'WH', 'c8': 'WB', 'd8': 'WQ', 'e8': 'WK', 'f8': 'WB', 'g8': 'WH', 'h8': 'WR',
+                            'a7': 'WP', 'b7': 'WP', 'c7': 'WP', 'd7': 'WP', 'e7': 'WP', 'f7': 'WP', 'g7': 'WP', 'h7': 'WP',
+                            'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '', 
+                            'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
+                            'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '', 
+                            'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '', 
+                            'a2': 'BP', 'b2': 'BP', 'c2': 'BP', 'd2': 'BP', 'e2': 'BP', 'f2': 'BP', 'g2': 'BP', 'h2': 'BP',  
+                            'a1': 'BR', 'b1': 'BH', 'c1': 'BB', 'd1': 'BQ', 'e1': 'BK', 'f1': 'BB', 'g1': 'BH', 'h1': 'BR'}
             request.session['cords_ancle'] = cords_ancle
+            request.session['location_figur'] = location_figur
             filt_record.user2_id = curent_user
             filt_record.save()
             name1 = CustomUser.objects.get(id=user1)
