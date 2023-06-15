@@ -26,7 +26,7 @@ from django.conf import settings
 
 
 urlpatterns = [
-    path("admin", admin.site.urls),
+    # path("admin", admin.site.urls),
     path("", main_views.Home, name='Home'),
     path("PlayerRating", main_views.PlayerRating, name='PlayerRating'),
     path("GameHistoryPage", main_views.GameHistoryPage, name='GameHistory'),
@@ -48,6 +48,7 @@ urlpatterns = [
 
 
     path('analyse', step_views.analyse, name='analyse'),
+    # path('endGame', step_views.endGame, name='endGame')
 
     path("ViewGame?<int:pin>", step_views.ViewGame, name='ViewGame')
 ]

@@ -4,22 +4,8 @@
 
 {% block content %}
 
-<div class="container" style="padding: 25px 0 0 0;"">
-    <div class=" row align-content-center">
-  <div class="col-sm-3 text-center">
-    <br><br>
-    <a class="nav-link" style="font-weight: 700; color: #111;" href="#">1 player</a>
-  </div>
-  <div class="col">
-    <chess-board position="start"> </chess-board>
-  </div>
-  <div class="col-sm-3 text-center">
-    <br><br>
-    <a class="nav-link player-link" style="font-weight: 700; color: #111;" href="#">2 player</a>
-    <button type="button" id="btn-back" class="btn btn-warning">back</button>
-    <button type="button" id="btn-next" class="btn btn-success">next</button>
-  </div>
-</div>
+<div class="container" style="height: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 25px 0;">
+  <chess-board hideNotation="True" orientation="white" draggable-pieces position="start" style="width: 590px;"></chess-board>
 </div>
 
 {% endblock content %}

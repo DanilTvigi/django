@@ -6,10 +6,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 class UserRegisterForm(UserCreationForm):
     username = forms.CharField(label='Логин')
-    email = forms.CharField(label='Почтовый адрес')                      
+    # email = forms.CharField(label='Почтовый адрес')                      
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'password1', 'password2'] #'email',
 
 
 class CustomLoginForm(AuthenticationForm):

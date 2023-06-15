@@ -1,6 +1,6 @@
 
 let playing = false; // Флаг, указывающий, идет ли игра
-let currentPlayer = 1; // Текущий игрок (1 - белые, 2 - черные)
+let currentPlayer = 2; // Текущий игрок (1 - белые, 2 - черные)
 let add_time = 5
 const timerPanel = document.querySelector('.player'); // Панель таймера
 const buttons = document.querySelectorAll('.bttn'); // Кнопки "Старт" и "Сброс"
@@ -68,7 +68,9 @@ const startTimer = () => {
 
     let timerId = setInterval(function () {
         // Player 1.
+        
         if (currentPlayer === 1) {
+            
             if (playing) {
                 // Disable start button.
                 buttons[0].disabled = true; // Отключение кнопки "Старт"
@@ -134,6 +136,31 @@ document.addEventListener('keypress', function(event) {
         callDjangoView();
     }
 });
+
+
+
+
+
+// Цикл по кнопкам "Старт" и "Сброс"
+for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', () => {
+        if (buttons[i].textContent === 'СТАРТ') {
+            callDjangoView();
+            // Turn the button a gray color to signify a disabled button.
+            buttons[i].style.color = '#EEEEEE'; // Изменение цвета кнопки "Старт" на серый
+            buttons[i].style.backgroundColor = '#606060'; // Изменение цвета фона кнопки "Старт" на темно-серый
+            startTimer(); // Запуск таймера
+        } else {
+            // var xhr = new XMLHttpRequest();
+            // var url = '/endGame' + encodeURIComponent(variableValue);
+            // xhr.open('GET', url, true);
+            // xhr.send();
+            location.reload(true); // Перезагрузка страницы для сброса всех значений
+            variableValue = 0;
+        }
+    });
+}
+
 var variableValue = 0;
 function callDjangoView() {
     variableValue = variableValue + 1
@@ -147,23 +174,3 @@ function callDjangoView() {
     // Отправляем запрос на сервер
     xhr.send();
 }
-
-
-
-// Цикл по кнопкам "Старт" и "Сброс"
-for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener('click', () => {
-        if (buttons[i].textContent === 'START') {
-            // Turn the button a gray color to signify a disabled button.
-            buttons[i].style.color = '#EEEEEE'; // Изменение цвета кнопки "Старт" на серый
-            buttons[i].style.backgroundColor = '#606060'; // Изменение цвета фона кнопки "Старт" на темно-серый
-            startTimer(); // Запуск таймера
-        } else {
-            // Reset everything by reloading the page.
-            location.reload(true); // Перезагрузка страницы для сброса всех значений
-            variableValue = 0;
-        }
-    });
-}
-
-

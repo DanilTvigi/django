@@ -11,6 +11,8 @@ from users.models import SessionConnection
 from datetime import datetime
 from step.models import Steps
 from django.shortcuts import render, redirect
+from django.db.models import Max
+from main.models import GameHistory
 
 
 
@@ -67,9 +69,28 @@ def analyse(request):
     return HttpResponse('ok')
 
 def ViewGame(request, pin):
-    records = Steps.objects.filter(pin_game=pin)
+    print('------------')
+    print(pin)
+    players = GameHistory.objects.get(pin_game=pin)
+    print(players.user_W_id)
+    max_queue_step = Steps.objects.filter(pin_game=pin).aggregate(max_queue_step=Max('queue_step'))['max_queue_step']
+    
+    
+# Получение всех значений столбца step, кроме первого значения
+    steps = Steps.objects.filter(pin_game=pin).values_list('step', flat=True)[1:]
+    mylist = list()
+
+    for i in steps:
+        mylist.append(i)
+
+    tmp = ','.join([str(i) for i in mylist])
+    data = {
+        'players':players,
+        'steps':tmp,
+    }
+    return render(request, "ViewGame.html", context=data)
 
 
+#   <!-- {% url 'PlayerProfile' players.user_W_id %} -->
 
-
-    return render(request, "ViewGame.html")
+#     <!-- {% url 'PlayerProfile' players.user_B_id %} -->

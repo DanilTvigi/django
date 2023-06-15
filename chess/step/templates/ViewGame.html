@@ -4,31 +4,36 @@
 
 
 
-<div class="container" style="padding: 25px 0 0 0;"">
+<div class="container" style="padding: 25px 0 0 0;">
+  <!-- <span>{{ steps }}</span> -->
     <div class=" row align-content-center">
   <div class="col-sm-3 text-center">
     <br><br>
-    <a class="nav-link" style="font-weight: 700; color: #111;" href="#">1 player</a>
+    <a class="nav-link" style="font-weight: 700; color: #111;" href="{% url 'PlayerProfile' players.user_W_id %}">{{ players.username_W }}</a>
+  
+    <button type="button" id="btn-back" class="btn btn-warning">Back</button>
   </div>
   <div class="col">
-    <chess-board position="start"> </chess-board>
+    <chess-board  position="start" orientation="white"> </chess-board>
+  <!-- hideNotation="True" -->
   </div>
   <div class="col-sm-3 text-center">
     <br><br>
-    <a class="nav-link player-link" style="font-weight: 700; color: #111;" href="#">2 player</a>
-    <button type="button" id="btn-back" class="btn btn-warning">back</button>
-    <button type="button" id="btn-next" class="btn btn-success">next</button>
+    <a class="nav-link player-link" style="font-weight: 700; color: #111;" href="{% url 'PlayerProfile' players.user_B_id %}">{{ players.username_B }}</a> 
+
+    <button type="button" id="btn-next" class="btn btn-success">Next</button>
   </div>
 </div>
-
-
+<p hidden id="list">{{steps}}</p>
 
 {% endblock content %}
 
 {% block script %}
+
+
 <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="module" src="{% static 'js/main.js' %}"></script>
-<script type="module" src="/node_modules/chessboard-element/index.js"></script>
+<!-- <script type="module" src="/node_modules/chessboard-element/index.js"></script> -->
 <script type="module" src="https://unpkg.com/chessboard-element?module"></script>
 {% endblock script %}

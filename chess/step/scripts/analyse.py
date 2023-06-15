@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
+import statistics
 import copy
 
 class Analyse:
@@ -208,11 +209,9 @@ class Analyse:
         # cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
 
         # cv2.imwrite('test.png', test)
-        test_color = copy.deepcopy(color)
+        # test_color = copy.deepcopy(color)
 
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
-        # ret, threshold = cv2.threshold(img_gray, 99, 255, cv2.THRESH_BINARY)
-        # inverted = cv2.bitwise_not(threshold)
         blurred = cv2.GaussianBlur(img_gray, (11,11), 0)
         edges_K = cv2.Canny(blurred,0, 85)    # 0 50  5 85
         cv2.imwrite('res2.png', edges_K)
@@ -229,30 +228,16 @@ class Analyse:
                     sum_g += g
                     sum_b += b
                     
-            if round((sum_r / 50) + (sum_g / 50) + (sum_b / 50)) > 750:
+            if round((sum_r / 50) + (sum_g / 50) + (sum_b / 50)) > 650:
                 color[key] = 1
             else:
                 color[key] = 0
-            test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
-        print('1')
-        print(color)
-
+            # test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
         return color
     
-    def step(color, moves, location_figur, queue_step):   
-
-        # past_pole = {'a8': 2, 'b8': 2, 'c8': 2, 'd8': 2, 'e8': 2, 'f8': 2, 'g8': 2, 'h8': 2,
-        #              'a7': 2, 'b7': 2, 'c7': 2, 'd7': 2, 'e7': 2, 'f7': 2, 'g7': 2, 'h7': 2,
-        #              'a6': 2, 'b6': 2, 'c6': 2, 'd6': 2, 'e6': 2, 'f6': 2, 'g6': 2, 'h6': 2, 
-        #              'a5': 2, 'b5': 2, 'c5': 2, 'd5': 2, 'e5': 2, 'f5': 2, 'g5': 2, 'h5': 2, 
-        #              'a4': 2, 'b4': 2, 'c4': 2, 'd4': 2, 'e4': 2, 'f4': 2, 'g4': 2, 'h4': 2,
-        #              'a3': 2, 'b3': 2, 'c3': 2, 'd3': 2, 'e3': 2, 'f3': 2, 'g3': 2, 'h3': 2,
-        #              'a2': 2, 'b2': 2, 'c2': 2, 'd2': 2, 'e2': 2, 'f2': 2, 'g2': 2, 'h2': 2,
-        #              'a1': 2, 'b1': 2, 'c1': 2, 'd1': 2, 'e1': 2, 'f1': 2, 'g1': 2, 'h1': 2}
+    def step(color, location_figur, queue_step):   
         past_pole = copy.deepcopy(color)
         tmp_location_figur = copy.deepcopy(location_figur)
-        print('tmp_location_figur')
-        print(tmp_location_figur)
         if int(queue_step) % 2 != 0: #ход белых
             for key in tmp_location_figur.keys():
                 if tmp_location_figur[key].startswith("W") or tmp_location_figur[key] == '':
@@ -267,17 +252,12 @@ class Analyse:
                 else:
                     color[key] = 0
                     tmp_location_figur[key] = ''
-        print('color')  
-        print(color)
-        print('tmp_location_figur')
-        print(tmp_location_figur)
         keys = list(past_pole.keys())  
         for i in range(len(keys)):
             if tmp_location_figur[keys[i]] == '':
                 past_pole[keys[i]] = 0
                 continue
             else:
-                # past_pole[keys[i]] = int(moves[i])
                 past_pole[keys[i]] = 1
         past_cell, new_cell = '', ''
         step = ''
@@ -291,8 +271,6 @@ class Analyse:
         print(step)
         tmp_location_figur[new_cell] = tmp_location_figur[past_cell]
         tmp_location_figur[past_cell] = ''
-        print('tmp_location_figur')
-        print(tmp_location_figur)
         for key in tmp_location_figur.keys():
             if (tmp_location_figur[key].startswith("B") and (location_figur[key] == '' or location_figur[key].startswith("W"))) or (tmp_location_figur[key].startswith("W") and (location_figur[key] == '' or location_figur[key].startswith("B"))):
                 location_figur[key] = tmp_location_figur[key]
@@ -303,6 +281,4 @@ class Analyse:
         step = past_cell + new_cell
         past_pole[new_cell] = 1
         past_pole[past_cell] = 0
-        moves = ''.join(str(value) for value in past_pole.values())
-        
-        return moves, step, location_figur
+        return step, location_figur
