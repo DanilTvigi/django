@@ -201,15 +201,15 @@ class Analyse():
         return kletki, color, step_v, step_g
     
     def color_pixel(img_np, kletki, color, step_v, step_g): #
-        test = img_np
-        for key in kletki:
-            x, y = kletki[key]
-            cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
-        # # x, y = kletki['f8']
-        cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+        # test = img_np
+        # for key in kletki:
+        #     x, y = kletki[key]
+        #     cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+        # # # x, y = kletki['f8']
+        # cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
 
-        cv2.imwrite('test.png', test)
-        test_color = copy.deepcopy(color)
+        # cv2.imwrite('test.png', test)
+        # test_color = copy.deepcopy(color)
 
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
         blurred = cv2.GaussianBlur(img_gray, (11,11), 0)
@@ -232,79 +232,57 @@ class Analyse():
                 color[key] = 1
             else:
                 color[key] = 0
-            test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
-        print('color')
-        print(color)
-        print('test_color')
-        print(test_color)
+            # test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
         return color
     
-    def step(color, location_figur, queue_step, color_figure):   
+    def step(color, old_step, queue_step, new_step):   
         # color наличние фигур на текущем поле
-        # location_figuer растановка фигур на прошлом ходе W or B or ''
-        # tmp_location_figure дубликат location_figure
-        # color_figure определение цвета фигуры белая/черная на текущем поле
+        # old_step растановка фигур на прошлом ходе W or B or ''
+        # new_step определение цвета фигуры белая/черная на текущем поле
         # past_pole растановка фигру на прошлом ходе 0 or 1
-        past_pole = copy.deepcopy(color)
-        tmp_location_figur = copy.deepcopy(location_figur)
-        if int(queue_step) % 2 != 0: #ход белых
-            for key in tmp_location_figur.keys():
-                if tmp_location_figur[key].startswith("W") or tmp_location_figur[key] == '':
-                    continue
-                else:
-                    color[key] = 0
-                    tmp_location_figur[key] = ''
-        else:
-            for key in tmp_location_figur.keys():
-                if tmp_location_figur[key].startswith("B") or tmp_location_figur[key] == '':
-                    continue
-                else:
-                    color[key] = 0
-                    tmp_location_figur[key] = ''
-        keys = list(past_pole.keys())  
-        for i in range(len(keys)):
-            if tmp_location_figur[keys[i]] == '':
-                past_pole[keys[i]] = 0
-                continue
+        step = ""
+        # past_pole = copy.deepcopy(color)
+        # tmp_location_figur = copy.deepcopy(location_figur)
+
+        if int(queue_step) == 0: # Базовая расстановка
+            return "", new_step
+        
+        dropF = []
+        changeF = []
+
+        for key in old_step.keys():
+            if old_step[key] != new_step[key]:
+                # Ход
+                if new_step[key] == 0: dropF.append(key)
+                # Рубка
+                else: changeF.append(key)
+        
+
+        # print(f"dropF = {dropF}")
+        # print(f"changeF = {changeF}")
+
+        # Проверка пропажи
+        ## Пропала 1 фигура
+        if len(dropF) == 1:
+            if len(changeF) == 1:
+                # Возможно условие на проверку валидности хода
+                step = dropF[0] + changeF[0]
+                return step, new_step
             else:
-                past_pole[keys[i]] = 1
-        past_cell, new_cell = '', ''
-        step = ''
-        for key in color:
-            if color[key] != past_pole[key]:
-                if color[key] == 1:
-                    new_cell = key
-                else:
-                    past_cell = key
+                for change in changeF:
+                    # White
+                    if queue_step % 2 == 1:
+                        if old_step[changeF] == "W" and new_step[changeF] == "B":
+                            changeF.remove(change)
+                    # Black
+                    else:
+                        if old_step[changeF] == "B" and new_step[changeF] == "W":
+                            changeF.remove(change)
+                if len(changeF) == 1: 
+                    step = dropF[0] + changeF[0]
+                    return step, new_step
+                        
 
-
-        if new_cell == '':
-            print('tmp')
-            print(tmp_location_figur)
-            print('color figure')
-            print(color_figure)
-            for key in tmp_location_figur.keys():
-                if past_cell == key:
-                    continue
-                elif (tmp_location_figur[key] != color_figure[key]) and (color_figure[key] != '' and tmp_location_figur[key] != ''):
-                    new_cell = key
-                    print(new_cell)
-                    break
-            step = past_cell + new_cell
-        else:
-            step = past_cell + new_cell
-
-
-        # step = past_cell + new_cell
-        tmp_location_figur[new_cell] = tmp_location_figur[past_cell]
-        tmp_location_figur[past_cell] = ''
-        for key in tmp_location_figur.keys():
-            if (tmp_location_figur[key].startswith("B") and (location_figur[key] == '' or location_figur[key].startswith("W"))) or (tmp_location_figur[key].startswith("W") and (location_figur[key] == '' or location_figur[key].startswith("B"))):
-                location_figur[key] = tmp_location_figur[key]
-            elif key == past_cell:
-                if (tmp_location_figur[key].startswith('') and (location_figur[key] == "B" or location_figur[key].startswith("W"))) or (tmp_location_figur[key].startswith('') and (location_figur[key] == "W" or location_figur[key].startswith("B"))):
-                    location_figur[key] = tmp_location_figur[key] 
-
-        past_pole[new_cell] = 1
-        past_pole[past_cell] = 0
-        return step, location_figur
+        elif len(dropF) == 0:
+            step = ""
+            return step, old_step

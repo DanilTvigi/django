@@ -1,44 +1,161 @@
-pole_def = {'A1': 'WR', 'B1': 'WH', 'C1': 'WB', 'D1': 'WQ', 'E1': 'WK', 'F1': 'WB', 'G1': 'WH', 'H1': 'WR', 
-            'A2': 'WP', 'B2': 'WP', 'C2': 'WP', 'D2': 'WP', 'E2': 'WP', 'F2': 'WP', 'G2': 'WP', 'H2': 'WP', 
-            'A3': '', 'B3': '', 'C3': '', 'D3': '', 'E3': '', 'F3': '', 'G3': '', 'H3': '', 
-            'A4': '', 'B4': '', 'C4': '', 'D4': '', 'E4': '', 'F4': '', 'G4': '', 'H4': '', 
-            'A5': '', 'B5': '', 'C5': '', 'D5': '', 'E5': '', 'F5': '', 'G5': '', 'H5': '', 
-            'A6': '', 'B6': '', 'C6': '', 'D6': '', 'E6': '', 'F6': '', 'G6': '', 'H6': '', 
-            'A7': 'BP', 'B7': 'BP', 'C7': 'BP', 'D7': 'BP', 'E7': 'BP', 'F7': 'BP', 'G7': 'BP', 'H7': 'BP', 
-            'A8': 'BR', 'B8': 'BH', 'C8': 'BB', 'D8': 'BQ', 'E8': 'BK', 'F8': 'BB', 'G8': 'BH', 'H8': 'BR'}
+# from django.http import HttpResponse
+from subprocess import Popen, PIPE
+import cv2
+import numpy as np
+import camera
+from analyse import Analyse
+# from users.models import SessionConnection
+from datetime import datetime
+# from step.models import Steps
+# from django.shortcuts import render, redirect
+# from django.db.models import Max
+# from main.models import GameHistory
+from newAnalyse import newAnalyse
+import search
+
+def step_runner(step_base):
+    figures = {
+        'a8': 'L', 'b8': 'H', 'c8': 'B', 'd8': 'K', 'e8': 'F', 'f8': 'B', 'g8': 'H', 'h8': 'L',
+        'a7': 'P', 'b7': 'P', 'c7': 'P', 'd7': 'P', 'e7': 'P', 'f7': 'P', 'g7': 'P', 'h7': 'P',
+        'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '', 
+        'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
+        'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '', 
+        'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '', 
+        'a2': 'P', 'b2': 'P', 'c2': 'P', 'd2': 'P', 'e2': 'P', 'f2': 'P', 'g2': 'P', 'h2': 'P',  
+        'a1': 'L', 'b1': 'H', 'c1': 'B', 'd1': 'K', 'e1': 'F', 'f1': 'B', 'g1': 'H', 'h1': 'L'
+    }
+    
+    for step in step_base:
+        old = step[0:2]
+        new = step[2:4]
+
+        figures[new] = figures[old]
+        figures[old] = ""
+
+    return figures
+
+
+def print_area(pole):
+    for num in range(8,0,-1):
+        for letter in ['a','b','c','d','e','f','g','h']:
+            key = letter + str(num)
+            print(f"{key} = {pole[key]}", end=" | ")
+        print()
+
+def get_base():
+    while True:
+        try:
+            temp = []
+            while len(temp) < 2:  
+                print('1')
+                img = camera.get_img("10.2.31.25","admin","Skills39!", True)
+                tmp = bytes()
+                for t in img:
+                    tmp += t
+                nparr = np.frombuffer(tmp, np.uint8)
+                img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                cv2.imwrite('tmp.png', img_np)
+                img_np = cv2.imread('tmp.png', 1)
+                temp = search.search(img_np) 
+            QRs = Analyse.search_qr_code(temp)
+            cords_ancle = Analyse.cords_ancle_board(QRs)
+            kletki, color, step_v, step_g = Analyse.search_cell(cords_ancle)
+            break
+        except Exception as a:
+                continue
+    location_figur = {'a8': 'B', 'b8': 'B', 'c8': 'B', 'd8': 'B', 'e8': 'B', 'f8': 'B', 'g8': 'B', 'h8': 'B',
+                    'a7': 'B', 'b7': 'B', 'c7': 'B', 'd7': 'B', 'e7': 'B', 'f7': 'B', 'g7': 'B', 'h7': 'B',
+                    'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '', 
+                    'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
+                    'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '', 
+                    'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '', 
+                    'a2': 'W', 'b2': 'W', 'c2': 'W', 'd2': 'W', 'e2': 'W', 'f2': 'W', 'g2': 'W', 'h2': 'W',  
+                    'a1': 'W', 'b1': 'W', 'c1': 'W', 'd1': 'W', 'e1': 'W', 'f1': 'W', 'g1': 'W', 'h1': 'W'}
+    
+    return [cords_ancle, location_figur]
+
+def analyse(old, cords_ancle, queue_step, step_base):
+    figures = step_runner(step_base)
+    # Get image
+    img = camera.get_img("10.2.31.25","admin","Skills39!", True)
+    tmp = bytes()
+    for t in img:
+        tmp += t
+    nparr = np.frombuffer(tmp, np.uint8)
+    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    cv2.imwrite('tmp.png', img_np)
+    img_np = cv2.imread('tmp.png', 1)
+
+    # Get pin
+    # pin_game = request.session.get('pin')
+    # Get coordinates
+    # cords_ancle = request.session.get('cords_ancle')
+    # Get kletki
+    
+    kletki, color, step_v, step_g = Analyse.search_cell(cords_ancle)
+    color = Analyse.color_pixel(img_np, kletki, color, step_v, step_g)   #
+
+    # save kletki and color
+
+    class req:
+        def __init__(self, kletki, color):
+            self.kletki = kletki
+            self.color = color
+
+    request = req(kletki, color)
+    new_analyse = newAnalyse(request)
+    
+    new = new_analyse.check_color_figure()
+
+    step, old = Analyse.step(color, old, queue_step, new) 
+    
+    print("*"*70)
+    print(f"step = '{step}'")
+    print_area(new)
+    print()
+    print_area(old)
+    print("*"*70)
+
+    return step, old
+
+    # request.session['location_figur'] = location_figur
+    # record = SessionConnection.objects.get(pin_game=pin_game)
+    # user_id_W = record.user1_id
+    # user_id_B = record.user2_id
+    # time = datetime.now()
+    # new_record = Steps.objects.create(pin_game=pin_game,
+    #                                   queue_step=queue_step,
+    #                                   user_id_W=user_id_W,
+    #                                   user_id_B=user_id_B,
+    #                                   step=step,
+    #                                   time=time)
+    
+
+if __name__ == "__main__":
+    base = get_base()
+    cords_ancle = base[0]
+    # location_figur = base[1]
+    old = {
+        'a8': 'B', 'b8': 'B', 'c8': 'B', 'd8': 'B', 'e8': 'B', 'f8': 'B', 'g8': 'B', 'h8': 'B',
+        'a7': 'B', 'b7': 'B', 'c7': 'B', 'd7': 'B', 'e7': 'B', 'f7': 'B', 'g7': 'B', 'h7': 'B',
+        'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0, 
+        'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0,
+        'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0, 
+        'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0, 
+        'a2': 'W', 'b2': 'W', 'c2': 'W', 'd2': 'W', 'e2': 'W', 'f2': 'W', 'g2': 'W', 'h2': 'W',  
+        'a1': 'W', 'b1': 'W', 'c1': 'W', 'd1': 'W', 'e1': 'W', 'f1': 'W', 'g1': 'W', 'h1': 'W'
+    }
+
+    queue_step = 1
+
+    print("START")
+    while(queue_step < 10):
         
-past_pole = {'A1': '1', 'B1': '1', 'C1': '1', 'D1': '1', 'E1': '1', 'F1': '1', 'G1': '1', 'H1': '1', 
-             'A2': '1', 'B2': '1', 'C2': '1', 'D2': '1', 'E2': '1', 'F2': '1', 'G2': '1', 'H2': '1', 
-             'A3': '0', 'B3': '0', 'C3': '0', 'D3': '0', 'E3': '0', 'F3': '0', 'G3': '0', 'H3': '0', 
-             'A4': '0', 'B4': '0', 'C4': '0', 'D4': '0', 'E4': '0', 'F4': '0', 'G4': '0', 'H4': '0', 
-             'A5': '0', 'B5': '0', 'C5': '0', 'D5': '0', 'E5': '0', 'F5': '0', 'G5': '0', 'H5': '0', 
-             'A6': '1', 'B6': '0', 'C6': '0', 'D6': '0', 'E6': '0', 'F6': '0', 'G6': '0', 'H6': '0', 
-             'A7': '0', 'B7': '1', 'C7': '1', 'D7': '1', 'E7': '1', 'F7': '1', 'G7': '1', 'H7': '1', 
-             'A8': '1', 'B8': '1', 'C8': '1', 'D8': '1', 'E8': '1', 'F8': '1', 'G8': '1', 'H8': '1'}
-        
-current_pole = {'A1': '1', 'B1': '1', 'C1': '1', 'D1': '1', 'E1': '1', 'F1': '1', 'G1': '1', 'H1': '1', 
-                'A2': '1', 'B2': '1', 'C2': '1', 'D2': '1', 'E2': '0', 'F2': '1', 'G2': '1', 'H2': '1', 
-                'A3': '0', 'B3': '0', 'C3': '0', 'D3': '0', 'E3': '0', 'F3': '0', 'G3': '0', 'H3': '0', 
-                'A4': '0', 'B4': '0', 'C4': '0', 'D4': '0', 'E4': '1', 'F4': '0', 'G4': '0', 'H4': '0', 
-                'A5': '0', 'B5': '0', 'C5': '0', 'D5': '0', 'E5': '0', 'F5': '0', 'G5': '0', 'H5': '0', 
-                'A6': '1', 'B6': '0', 'C6': '0', 'D6': '0', 'E6': '0', 'F6': '0', 'G6': '0', 'H6': '0', 
-                'A7': '0', 'B7': '1', 'C7': '1', 'D7': '1', 'E7': '1', 'F7': '1', 'G7': '1', 'H7': '1', 
-                'A8': '1', 'B8': '1', 'C8': '1', 'D8': '1', 'E8': '1', 'F8': '1', 'G8': '1', 'H8': '1'}
+        step_base = []
+        step, old = analyse(old, cords_ancle, queue_step, step_base)
 
-past_cell, new_cell = '', ''
-step = ''
-
-for key in current_pole:
-    if current_pole[key] == past_pole[key]:
-        continue
-    else:
-        if current_pole[key] == '0':
-            past_cell = key
-            past_pole[key] = '0' 
-        elif current_pole[key] == '1':
-            new_cell = key
-            past_pole[key] = '1'
-step = past_cell + new_cell
-
-print(past_pole)
-print(step)
+        if step != "":
+            print(f"{queue_step} | step = '{step}'")
+            input("NEXT")
+            step_base.append(step)
+            queue_step+=1

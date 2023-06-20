@@ -12,7 +12,18 @@ from django.db.models import Max
 from main.models import GameHistory
 from newAnalyse import newAnalyse
 
+
+
+def print_area(pole):
+    area = pole.check_color_figure()
+    for num in range(8,0,-1):
+        for letter in ['a','b','c','d','e','f','g','h']:
+            key = letter + str(num)
+            print(f"{key} = {area[key]}", end=" | ")
+        print()
+
 def analyse(request):
+    # Get image
     img = camera.get_img("10.2.31.25","admin","Skills39!", True)
     tmp = bytes()
     for t in img:
@@ -22,23 +33,33 @@ def analyse(request):
     cv2.imwrite('tmp.png', img_np)
     img_np = cv2.imread('tmp.png', 1)
 
-   
+    # Get pin
     pin_game = request.session.get('pin')
-
+    # Get coordinates
     cords_ancle = request.session.get('cords_ancle')
+    # Get kletki
     kletki, color, step_v, step_g = Analyse.search_cell(cords_ancle)
     color = Analyse.color_pixel(img_np, kletki, color, step_v, step_g)   #
 
+    # save kletki and color
     request.kletki = kletki
     request.color = color
+
     new_analyse = newAnalyse(request)
-    color_figure = new_analyse.check_color_figure()
+    new = new_analyse.check_color_figure()
 
     queue_step = request.GET.get("variable")
-    location_figur = request.session.get('location_figur')
-    step, location_figur = Analyse.step(color, location_figur, queue_step, color_figure) 
-    print(step)
-    request.session['location_figur'] = location_figur
+    old = request.session.get('location_figur')
+    step, old = Analyse.step(color, old, queue_step, new) 
+    print(f'step {step}')
+    # print("*"*100)
+    # print(step)
+    # print_area(color_figure)
+    # print_area(location_figur)
+    # print("*"*100)
+
+
+    request.session['location_figur'] = old
     record = SessionConnection.objects.get(pin_game=pin_game)
     user_id_W = record.user1_id
     user_id_B = record.user2_id
@@ -68,11 +89,8 @@ def ViewGame(request, pin):
 
 def EndGame(request):
     if SessionConnection.objects.filter(user2_id = request.user.id).exists():
-        print('2')
         obj = SessionConnection.objects.get(user2_id = request.user.id)
     else:
-        print('1')
-
         obj = SessionConnection.objects.get(user1_id = request.user.id)
     obj.delete()
     return redirect('Home')

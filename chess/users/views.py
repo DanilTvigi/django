@@ -118,16 +118,18 @@ def LoginGame(request):
                     break
                 except Exception as a:
                      continue
-            location_figur = {'a8': 'B', 'b8': 'B', 'c8': 'B', 'd8': 'B', 'e8': 'B', 'f8': 'B', 'g8': 'B', 'h8': 'B',
-                            'a7': 'B', 'b7': 'B', 'c7': 'B', 'd7': 'B', 'e7': 'B', 'f7': 'B', 'g7': 'B', 'h7': 'B',
-                            'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '', 
-                            'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
-                            'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '', 
-                            'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '', 
-                            'a2': 'W', 'b2': 'W', 'c2': 'W', 'd2': 'W', 'e2': 'W', 'f2': 'W', 'g2': 'W', 'h2': 'W',  
-                            'a1': 'W', 'b1': 'W', 'c1': 'W', 'd1': 'W', 'e1': 'W', 'f1': 'W', 'g1': 'W', 'h1': 'W'}
+            old = {
+                'a8': 'B', 'b8': 'B', 'c8': 'B', 'd8': 'B', 'e8': 'B', 'f8': 'B', 'g8': 'B', 'h8': 'B',
+                'a7': 'B', 'b7': 'B', 'c7': 'B', 'd7': 'B', 'e7': 'B', 'f7': 'B', 'g7': 'B', 'h7': 'B',
+                'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0, 
+                'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0,
+                'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0, 
+                'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0, 
+                'a2': 'W', 'b2': 'W', 'c2': 'W', 'd2': 'W', 'e2': 'W', 'f2': 'W', 'g2': 'W', 'h2': 'W',  
+                'a1': 'W', 'b1': 'W', 'c1': 'W', 'd1': 'W', 'e1': 'W', 'f1': 'W', 'g1': 'W', 'h1': 'W'
+            }
             request.session['cords_ancle'] = cords_ancle
-            request.session['location_figur'] = location_figur
+            request.session['location_figur'] = old
             filt_record.user2_id = curent_user
             filt_record.save()
             name1 = CustomUser.objects.get(id=user1)
