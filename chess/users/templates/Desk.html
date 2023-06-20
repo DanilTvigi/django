@@ -20,6 +20,9 @@
         <div class="alert alert-warning text-center" role="alert" style="margin-top: 25px;">
             {{ message }} {{ pin }}
         </div>
+        <div class="d-flex justify-content-center align-items-center">
+        <button class="btn btn-success" type="button" style="font-size: 20px;" onclick="deleteGame()">Удалить игру</button>
+        </div>
     {% endif %}
     </div>
 
@@ -28,5 +31,15 @@
 
 {% endblock content %}
 {% block script %}
+
+    <script>
+        function deleteGame() {
+            var xhr = new XMLHttpRequest();
+            var url = '/EndGame' ;
+            xhr.open('GET', url, true);
+            xhr.send();
+            window.location.href = "/"
+        }
+    </script>
     <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 
 {% endblock script %}

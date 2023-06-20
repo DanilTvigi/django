@@ -4,7 +4,7 @@ from PIL import Image
 import statistics
 import copy
 
-class Analyse:
+class Analyse():
     def search_qr_code(temp):
         QRs = {}
         for w in temp:
@@ -109,7 +109,7 @@ class Analyse:
             for j in range(ref_point1[0], centre[0]+step_g, step_g):
                 s += 1
                 if s>4: break
-                cord = j+5, i+20
+                cord = j, i
                 cords_quarter1.append(cord)
         # print('1')
         # print(cords_quarter1)
@@ -129,7 +129,7 @@ class Analyse:
             for j in range(ref_point2[0], centre[0]-step_g, -step_g):
                 s += 1
                 if s>4: break
-                cord = j-55, i-10
+                cord = j-70, i #  -10
                 cords_quarter2.append(cord)
         # print('2')
         # print(cords_quarter2)
@@ -170,7 +170,7 @@ class Analyse:
             for j in range(ref_point4[0], centre[0]-step_g, -step_g):
                 s += 1
                 if s>4: break
-                cord = j-65, i-65
+                cord = j-80, i-65
                 cords_quarter4.append(cord)
         # print('4')
         # print(cords_quarter4)
@@ -200,16 +200,16 @@ class Analyse:
         
         return kletki, color, step_v, step_g
     
-    def color_pixel(img_np, kletki, color, step_v, step_g):
-        # test = img_np
-        # # for key in kletki:
-        # #     x, y = kletki[key]
-        # #     cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
-        # x, y = kletki['f8']
-        # cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+    def color_pixel(img_np, kletki, color, step_v, step_g): #
+        test = img_np
+        for key in kletki:
+            x, y = kletki[key]
+            cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+        # # x, y = kletki['f8']
+        cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
 
-        # cv2.imwrite('test.png', test)
-        # test_color = copy.deepcopy(color)
+        cv2.imwrite('test.png', test)
+        test_color = copy.deepcopy(color)
 
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
         blurred = cv2.GaussianBlur(img_gray, (11,11), 0)
@@ -220,22 +220,31 @@ class Analyse:
         for key in kletki:
             sum_r, sum_g, sum_b = 0,0,0
             total_brightness = 0
-            for i in range(0,50,1):
-                for j in range(0,50,1):
+            for i in range(0,60,1):
+                for j in range(0,60,1):
                     x, y = kletki[key]
                     r, g, b = img.getpixel((x + i, y + j))
                     sum_r += r
                     sum_g += g
                     sum_b += b
                     
-            if round((sum_r / 50) + (sum_g / 50) + (sum_b / 50)) > 650:
+            if round((sum_r / 60) + (sum_g / 60) + (sum_b / 60)) > 1500:
                 color[key] = 1
             else:
                 color[key] = 0
-            # test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
+            test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
+        print('color')
+        print(color)
+        print('test_color')
+        print(test_color)
         return color
     
-    def step(color, location_figur, queue_step):   
+    def step(color, location_figur, queue_step, color_figure):   
+        # color наличние фигур на текущем поле
+        # location_figuer растановка фигур на прошлом ходе W or B or ''
+        # tmp_location_figure дубликат location_figure
+        # color_figure определение цвета фигуры белая/черная на текущем поле
+        # past_pole растановка фигру на прошлом ходе 0 or 1
         past_pole = copy.deepcopy(color)
         tmp_location_figur = copy.deepcopy(location_figur)
         if int(queue_step) % 2 != 0: #ход белых
@@ -267,8 +276,26 @@ class Analyse:
                     new_cell = key
                 else:
                     past_cell = key
-        step = past_cell + new_cell
-        print(step)
+
+
+        if new_cell == '':
+            print('tmp')
+            print(tmp_location_figur)
+            print('color figure')
+            print(color_figure)
+            for key in tmp_location_figur.keys():
+                if past_cell == key:
+                    continue
+                elif (tmp_location_figur[key] != color_figure[key]) and (color_figure[key] != '' and tmp_location_figur[key] != ''):
+                    new_cell = key
+                    print(new_cell)
+                    break
+            step = past_cell + new_cell
+        else:
+            step = past_cell + new_cell
+
+
+        # step = past_cell + new_cell
         tmp_location_figur[new_cell] = tmp_location_figur[past_cell]
         tmp_location_figur[past_cell] = ''
         for key in tmp_location_figur.keys():
@@ -278,7 +305,6 @@ class Analyse:
                 if (tmp_location_figur[key].startswith('') and (location_figur[key] == "B" or location_figur[key].startswith("W"))) or (tmp_location_figur[key].startswith('') and (location_figur[key] == "W" or location_figur[key].startswith("B"))):
                     location_figur[key] = tmp_location_figur[key] 
 
-        step = past_cell + new_cell
         past_pole[new_cell] = 1
         past_pole[past_cell] = 0
         return step, location_figur

@@ -5,15 +5,11 @@ from PIL import Image
 import camera 
 import search 
 from analyse import Analyse
-# from step.models import Desk
-# from users.models import SessionConnection
-# from datetime import datetime
-# from step.models import Steps
 import copy
 import statistics
 
 class newAnalyse():
-    def __init__(self):
+    def __init__(self, request):
         self.span = 10
         self.step_v = 50
         self.green = [
@@ -29,25 +25,9 @@ class newAnalyse():
             'a8', 'b7', 'c8', 'd7', 'e8', 'f7', 'g8', 'h7',
         ]
 
-        self.temp = []
-        while len(self.temp) < 2:  
-            print('.', end="")
-            img = camera.get_img("10.2.31.25","admin","Skills39!", True)
-            tmp = bytes()
-            for t in img:
-                tmp += t
-            nparr = np.frombuffer(tmp, np.uint8)
-            img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-            cv2.imwrite('tmp.png', img_np)
-            self.img_np = cv2.imread('tmp.png', 1)
-            self.temp = search.search(img_np) 
 
-        QRs = Analyse.search_qr_code(self.temp)
-
-        cords_ancle = Analyse.cords_ancle_board(QRs)
-
-        self.kletki, color, step_v, step_g = Analyse.search_cell(cords_ancle)
-        self.color = Analyse.color_pixel(img_np, self.kletki, color, step_v, step_g, debug=True)
+        self.kletki = request.kletki
+        self.color = request.color
 
         self.img = Image.open('tmp.png')
 
@@ -112,14 +92,14 @@ class newAnalyse():
         self.mean_empty_black = self.get_mean_empty(empty_green)
         self.mean_empty_white = self.get_mean_empty(empty_blue)
 
-        print("mean_empty_black", self.mean_empty_black)
-        print("mean_empty_white", self.mean_empty_white)
+        # print("mean_empty_black", self.mean_empty_black)
+        # print("mean_empty_white", self.mean_empty_white)
 
     def check_color_figure(self):
         color_figure = copy.deepcopy(self.color)
 
         for key in color_figure.keys():
-            if color_figure[key] == 0:
+            if color_figure[key] == 0: # 0
                 continue
             else:
                 # print(f"OK -> {key}")
@@ -142,6 +122,4 @@ class newAnalyse():
                 else:
                     color_figure[key] = "B"
         return color_figure
-
-tmp = newAnalyse()
-tmp.check_color_figure()
+    

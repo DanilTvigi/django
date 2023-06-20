@@ -21,7 +21,7 @@ from main import views as main_views
 from users import views as users_views
 from step import views as step_views
 from django.contrib.auth import views as auth_views
-from django.conf import settings
+
 
 
 
@@ -39,17 +39,10 @@ urlpatterns = [
     path("Registration", users_views.Registration, name='Registration'),
     path("PersonalProfile?<int:id>", users_views.PersonalProfile, name='PersonalProfile'),
     path("PlayerProfile?<int:id>", users_views.PlayerProfile, name='PlayerProfile'),
-
-
-    # path('Login', auth_views.LoginView.as_view(template_name='Login.html'), name='Login'),
     path('Login', users_views.Login, name='Login'),
-
     path('Logout', auth_views.LogoutView.as_view(template_name='Home.html'), name='Logout'),
-
-
     path('analyse', step_views.analyse, name='analyse'),
-    # path('endGame', step_views.endGame, name='endGame')
-
+    path('EndGame', step_views.EndGame, name='EndGame'),
     path("ViewGame?<int:pin>", step_views.ViewGame, name='ViewGame')
 ]
 

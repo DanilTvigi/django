@@ -9,9 +9,14 @@
 {% if message %}
     <div class="container"  style="width: 500px;">
         <div class="alert alert-warning text-center" role="alert" style="margin-top: 25px;">
-            {{ message }}
+            {{ message }} {{ pin }}
+            <button class="timer__reset-bttn bttn" type="button">Завершить игру</button>
+            </div>
         </div>
+        <div>
+
     </div>
+   
 {% endif %}
 {% endblock content %}
 

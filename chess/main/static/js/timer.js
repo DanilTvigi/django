@@ -151,12 +151,13 @@ for (let i = 0; i < buttons.length; i++) {
             buttons[i].style.backgroundColor = '#606060'; // Изменение цвета фона кнопки "Старт" на темно-серый
             startTimer(); // Запуск таймера
         } else {
-            // var xhr = new XMLHttpRequest();
-            // var url = '/endGame' + encodeURIComponent(variableValue);
-            // xhr.open('GET', url, true);
-            // xhr.send();
-            location.reload(true); // Перезагрузка страницы для сброса всех значений
-            variableValue = 0;
+            var xhr = new XMLHttpRequest();
+            var url = '/EndGame' ;
+            xhr.open('GET', url, true);
+            xhr.send();
+            window.location.href = "/"
+            // location.reload(true); // Перезагрузка страницы для сброса всех значений
+            // variableValue = 0;
         }
     });
 }

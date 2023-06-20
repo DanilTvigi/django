@@ -1,4 +1,3 @@
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from users.models import SessionConnection, CustomUser
@@ -23,11 +22,9 @@ def PlayerRating(request):
     users = CustomUser.objects.all().order_by('-rating')
     return render(request, 'PlayerRating.html',{'users':users})
 
-
 def GameHistoryPage(request):
     games = GameHistory.objects.all()
     return render(request, 'GameHistoryPage.html', {'games':games})
-
 
 def Timer(request):
     filt_record = SessionConnection.objects.get(user2_id = request.user.id)

@@ -15,9 +15,6 @@ from analyse import Analyse
 import cv2
 import numpy as np
 
-
-
-
 def generate_random_number():
     random_number = random.randint(100000, 999999)
     return random_number
@@ -32,7 +29,6 @@ def Registration(request):
 		form = UserRegisterForm()
 	return render(request, 'Registration.html', {'form': form})
 
-
 def Login(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
@@ -46,7 +42,6 @@ def Login(request):
     else:	
         form = CustomLoginForm()
     return render(request, 'Login.html', {'form': form})
-
 
 @login_required
 def PersonalProfile(request, id):
@@ -68,7 +63,6 @@ def PersonalProfile(request, id):
             }
     return render(request, 'PlayerProfile.html', context=data)
 
-
 def PlayerProfile(request, id):
     print(id)
     user_record = CustomUser.objects.get(id=id)
@@ -88,7 +82,6 @@ def PlayerProfile(request, id):
             'email':email
             }
     return render(request, 'PlayerProfile.html', context=data)
-
 
 @login_required
 def LoginGame(request):
@@ -125,16 +118,14 @@ def LoginGame(request):
                     break
                 except Exception as a:
                      continue
-
-             
-            location_figur = {'a8': 'WR', 'b8': 'WH', 'c8': 'WB', 'd8': 'WQ', 'e8': 'WK', 'f8': 'WB', 'g8': 'WH', 'h8': 'WR',
-                            'a7': 'WP', 'b7': 'WP', 'c7': 'WP', 'd7': 'WP', 'e7': 'WP', 'f7': 'WP', 'g7': 'WP', 'h7': 'WP',
+            location_figur = {'a8': 'B', 'b8': 'B', 'c8': 'B', 'd8': 'B', 'e8': 'B', 'f8': 'B', 'g8': 'B', 'h8': 'B',
+                            'a7': 'B', 'b7': 'B', 'c7': 'B', 'd7': 'B', 'e7': 'B', 'f7': 'B', 'g7': 'B', 'h7': 'B',
                             'a6': '', 'b6': '', 'c6': '', 'd6': '', 'e6': '', 'f6': '', 'g6': '', 'h6': '', 
                             'a5': '', 'b5': '', 'c5': '', 'd5': '', 'e5': '', 'f5': '', 'g5': '', 'h5': '',
                             'a4': '', 'b4': '', 'c4': '', 'd4': '', 'e4': '', 'f4': '', 'g4': '', 'h4': '', 
                             'a3': '', 'b3': '', 'c3': '', 'd3': '', 'e3': '', 'f3': '', 'g3': '', 'h3': '', 
-                            'a2': 'BP', 'b2': 'BP', 'c2': 'BP', 'd2': 'BP', 'e2': 'BP', 'f2': 'BP', 'g2': 'BP', 'h2': 'BP',  
-                            'a1': 'BR', 'b1': 'BH', 'c1': 'BB', 'd1': 'BQ', 'e1': 'BK', 'f1': 'BB', 'g1': 'BH', 'h1': 'BR'}
+                            'a2': 'W', 'b2': 'W', 'c2': 'W', 'd2': 'W', 'e2': 'W', 'f2': 'W', 'g2': 'W', 'h2': 'W',  
+                            'a1': 'W', 'b1': 'W', 'c1': 'W', 'd1': 'W', 'e1': 'W', 'f1': 'W', 'g1': 'W', 'h1': 'W'}
             request.session['cords_ancle'] = cords_ancle
             request.session['location_figur'] = location_figur
             filt_record.user2_id = curent_user
@@ -151,10 +142,8 @@ def LoginGame(request):
                                                     pin_game = pin_input,
                                                     dateTime=datetime.now(),
                                                     lenght_game=0)
-            moves = ('1') * 16 + ('0') * 32 + ('1') * 16
             new_record = Steps.objects.create(pin_game=pin_input,
                                               queue_step=0,
-                                              moves=moves,
                                               user_id_W=user1,
                                               user_id_B=curent_user,
                                               step=0,
@@ -169,7 +158,6 @@ def LoginGame(request):
         data = {'message' : 'Такой игры не существует!'}
         return render(request, 'LoginGame.html', context=data)
 
-    
 @login_required
 def DeskGame(request):
     min = request.GET.get('min')
@@ -185,8 +173,6 @@ def DeskGame(request):
         return render(request, 'Desk.html', context=data)
          
     return render(request, 'Desk.html', context=data)
-
-
 
 @login_required
 def PINGame(request):
@@ -211,11 +197,8 @@ def PINGame(request):
                                                         user1_id=request.user.id, 
                                                         user2_id=None, 
                                                         min = min,
-                                                    #   sec = sec,
                                                         delete_time=delete_time,
                                                         desk = button_value,
                                                         cords_ancle=0)
         data = {'pin' : random_number}  
-        return render(request, 'PINGame.html', context=data)
-
- 
+    return render(request, 'PINGame.html', context=data)
