@@ -201,14 +201,14 @@ class Analyse():
         return kletki, color, step_v, step_g
     
     def color_pixel(img_np, kletki, color, step_v, step_g): #
-        # test = img_np
-        # for key in kletki:
-        #     x, y = kletki[key]
-        #     cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
-        # # # x, y = kletki['f8']
-        # cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+        test = img_np
+        for key in kletki:
+            x, y = kletki[key]
+            cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
+        # # x, y = kletki['f8']
+        cv2.rectangle(test, (x, y), (x+50,y+50), (0,0,255), 2)
 
-        # cv2.imwrite('test.png', test)
+        cv2.imwrite('test.png', test)
         # test_color = copy.deepcopy(color)
 
         img_gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)  
@@ -236,10 +236,6 @@ class Analyse():
         return color
     
     def step(color, old_step, queue_step, new_step, chessgame):   
-        print("^^^^^^^^^")
-        print(chessgame)
-        print("^^^^^^^^^")
-
         # color наличние фигур на текущем поле
         # old_step растановка фигур на прошлом ходе W or B or ''
         # new_step определение цвета фигуры белая/черная на текущем поле
@@ -272,33 +268,60 @@ class Analyse():
             if len(changeF) == 1:
                 # Возможно условие на проверку валидности хода
                 step = dropF[0] + changeF[0]
-                print(f'step2 {step}')
                 
                 drop = step[0:2]
                 change = step[2:4]
                 old_step[change] = old_step[drop]
                 old_step[drop] = 0
 
-                return step, new_step
+                return step, old_step
             else:
-                for change in changeF:
+                change_tmp = copy.deepcopy(changeF)
+                for change in change_tmp:
                     # White
                     if int(queue_step) % 2 == 1:
-                        if old_step[changeF] == "W" and new_step[changeF] == "B":
+                        if old_step[change] == "W" and new_step[change] == "B":
                             changeF.remove(change)
-                    # Black
+                        # elif old_step[change] == "B" and new_step[change] == "W":
+                        else:
+                            tmp = dropF[0] + change
+                            valid_steps = chessgame.get_moves()
+                            print(f'tmp | {tmp} | {valid_steps} | {chessgame}')
+                            if tmp not in valid_steps and new_step[change] != 'B':
+                                changeF.remove(change)
+                    # Black 
                     else:
-                        if old_step[changeF] == "B" and new_step[changeF] == "W":
+                        if old_step[change] == "B" and new_step[change] == "W":
                             changeF.remove(change)
-                if len(changeF) == 1: 
-                    step = dropF[0] + changeF[0]
-                    print(f'step3 {step}')
+                        # elif old_step[change] == "W" and new_step[change] == "B":
+                        else:
+                            tmp = dropF[0] + change
+                            valid_steps = chessgame.get_moves()
+                            print(f'tmp | {tmp} | {valid_steps} | {chessgame}')
 
-                    return step, new_step
+                            if tmp not in valid_steps and new_step[change] != 'W':
+                                changeF.remove(change)
+                print(f"changeF2 | {changeF}")
+                print(f"NEW")
+                for num in range(8,0,-1):
+                    for letter in ['a','b','c','d','e','f','g','h']:
+                        key = letter + str(num)
+                        print(f"{key} = {new_step[key]}", end=" | ")
+                    print()
+                if len(changeF) == 1: 
+                    
+                    step = dropF[0] + changeF[0]
+                        
+                    drop = step[0:2]
+                    change = step[2:4]
+                    old_step[change] = old_step[drop]
+                    old_step[drop] = 0
+                    
+                    return step, old_step
+                
                         
         elif len(dropF) == 0:
             step = ""
-            print(f'step4 {step}')
 
             return step, old_step
         else:
@@ -308,8 +331,13 @@ class Analyse():
 
                 if tmp in valid_steps:
                     step = tmp
-                    return step, new_step
+                        
+                    drop = step[0:2]
+                    change = step[2:4]
+                    old_step[change] = old_step[drop]
+                    old_step[drop] = 0
 
-        print(f'step5 {step}')
+                    return step, old_step
+
         
         return step, old_step

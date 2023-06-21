@@ -15,8 +15,10 @@ from Chessnut import Game
 
 def step_runner(step_base):
     chessgame = Game()
-
-    if step_base[0] == '0': 
+    step_base = list(step_base)
+    step_base.remove('0')
+    print(f"step base | {step_base}")
+    if len(step_base) == 0: 
         return chessgame
 
     for step in step_base:
@@ -68,12 +70,12 @@ def analyse(request):
     print("*"*70)
     print('OLD:')
     print_area(location_figur)
-    
+
     step, location_figur = Analyse.step(color, location_figur, queue_step, new, chessgame) 
     print(f'step {step}')
     print(step)
     print('NEW:')
-    print_area(new)
+    print_area(location_figur)
     print("*"*70)
 
 

@@ -37,15 +37,16 @@ class newAnalyse():
         self.get_empty_cell()
 
 
-    def walker(self, coordinates, size, step=5): # img_np, coodinates, size, step=5
+    def walker(self, coordinates, size, step=8): # img_np, coodinates, size, step=5
         x = coordinates[0]
         y = coordinates[1]
 
         tmp_color = []
 
         zx = x + size
-        zy = y
+        zy = int(y / 5)
         global_step = int(size / step)
+        print(f"global step | {global_step}")
         for dx in range(x, x+size, global_step):
             # -> x+
             r, g, b = self.img.getpixel((dx, y))
@@ -57,10 +58,31 @@ class newAnalyse():
             tmp_color.append(int((r + g + b) / 3))
             # self.img_np[y + size][dx] = (0,0,255)
 
-            # /
+            # /1
             r, g, b = self.img.getpixel((zx, zy))
             tmp_color.append(int((r + g + b) / 3))
             # self.img_np[zy][zx] = (0,0,255)
+
+            # /2
+            r, g, b = self.img.getpixel((zx, zy*2))
+            tmp_color.append(int((r + g + b) / 3))
+            # self.img_np[zy][zx] = (0,0,255)
+
+            # /3
+            r, g, b = self.img.getpixel((zx, zy*3))
+            tmp_color.append(int((r + g + b) / 3))
+            # self.img_np[zy][zx] = (0,0,255)
+
+            # /4
+            r, g, b = self.img.getpixel((zx, zy*4))
+            tmp_color.append(int((r + g + b) / 3))
+            # self.img_np[zy][zx] = (0,0,255)
+
+            # /5
+            r, g, b = self.img.getpixel((zx, zy*5))
+            tmp_color.append(int((r + g + b) / 3))
+            # self.img_np[zy][zx] = (0,0,255)
+
 
             zx -= global_step
             zy += global_step
