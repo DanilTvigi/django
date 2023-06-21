@@ -11,16 +11,26 @@ from django.shortcuts import render, redirect
 from django.db.models import Max
 from main.models import GameHistory
 from newAnalyse import newAnalyse
+from Chessnut import Game
 
+def step_runner(step_base):
+    chessgame = Game()
 
+    if step_base[0] == '0': 
+        return chessgame
+
+    for step in step_base:
+        chessgame.apply_move(step)
+
+    return chessgame
 
 def print_area(pole):
-    area = pole.check_color_figure()
     for num in range(8,0,-1):
         for letter in ['a','b','c','d','e','f','g','h']:
             key = letter + str(num)
-            print(f"{key} = {area[key]}", end=" | ")
+            print(f"{key} = {pole[key]}", end=" | ")
         print()
+    print()
 
 def analyse(request):
     # Get image
@@ -45,21 +55,29 @@ def analyse(request):
     request.kletki = kletki
     request.color = color
 
+    # Create furyres base
+    step_base = Steps.objects.filter(pin_game=pin_game).values_list('step', flat=True)
+    chessgame = step_runner(step_base)
+
     new_analyse = newAnalyse(request)
     new = new_analyse.check_color_figure()
 
+
     queue_step = request.GET.get("variable")
-    old = request.session.get('location_figur')
-    step, old = Analyse.step(color, old, queue_step, new) 
+    location_figur = request.session.get('location_figur')
+    print("*"*70)
+    print('OLD:')
+    print_area(location_figur)
+    
+    step, location_figur = Analyse.step(color, location_figur, queue_step, new, chessgame) 
     print(f'step {step}')
-    # print("*"*100)
-    # print(step)
-    # print_area(color_figure)
-    # print_area(location_figur)
-    # print("*"*100)
+    print(step)
+    print('NEW:')
+    print_area(new)
+    print("*"*70)
 
 
-    request.session['location_figur'] = old
+    request.session['location_figur'] = location_figur
     record = SessionConnection.objects.get(pin_game=pin_game)
     user_id_W = record.user1_id
     user_id_B = record.user2_id

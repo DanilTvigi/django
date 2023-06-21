@@ -235,7 +235,11 @@ class Analyse():
             # test_color[key] = round((sum_r / 50) + (sum_g / 50) + (sum_b / 50))
         return color
     
-    def step(color, old_step, queue_step, new_step):   
+    def step(color, old_step, queue_step, new_step, chessgame):   
+        print("^^^^^^^^^")
+        print(chessgame)
+        print("^^^^^^^^^")
+
         # color наличние фигур на текущем поле
         # old_step растановка фигур на прошлом ходе W or B or ''
         # new_step определение цвета фигуры белая/черная на текущем поле
@@ -245,6 +249,7 @@ class Analyse():
         # tmp_location_figur = copy.deepcopy(location_figur)
 
         if int(queue_step) == 0: # Базовая расстановка
+            print(f'step1 {step}')
             return "", new_step
         
         dropF = []
@@ -258,20 +263,27 @@ class Analyse():
                 else: changeF.append(key)
         
 
-        # print(f"dropF = {dropF}")
-        # print(f"changeF = {changeF}")
-
+        print(f"dropF = {dropF}")
+        print(f"changeF = {changeF}")
+        print("^^^^^^^^^")
         # Проверка пропажи
         ## Пропала 1 фигура
         if len(dropF) == 1:
             if len(changeF) == 1:
                 # Возможно условие на проверку валидности хода
                 step = dropF[0] + changeF[0]
+                print(f'step2 {step}')
+                
+                drop = step[0:2]
+                change = step[2:4]
+                old_step[change] = old_step[drop]
+                old_step[drop] = 0
+
                 return step, new_step
             else:
                 for change in changeF:
                     # White
-                    if queue_step % 2 == 1:
+                    if int(queue_step) % 2 == 1:
                         if old_step[changeF] == "W" and new_step[changeF] == "B":
                             changeF.remove(change)
                     # Black
@@ -280,9 +292,24 @@ class Analyse():
                             changeF.remove(change)
                 if len(changeF) == 1: 
                     step = dropF[0] + changeF[0]
+                    print(f'step3 {step}')
+
                     return step, new_step
                         
-
         elif len(dropF) == 0:
             step = ""
+            print(f'step4 {step}')
+
             return step, old_step
+        else:
+            for drop in dropF:
+                tmp = drop + changeF[0]
+                valid_steps = chessgame.get_moves()
+
+                if tmp in valid_steps:
+                    step = tmp
+                    return step, new_step
+
+        print(f'step5 {step}')
+        
+        return step, old_step

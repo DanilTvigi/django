@@ -118,7 +118,7 @@ def LoginGame(request):
                     break
                 except Exception as a:
                      continue
-            old = {
+            location_figur = {
                 'a8': 'B', 'b8': 'B', 'c8': 'B', 'd8': 'B', 'e8': 'B', 'f8': 'B', 'g8': 'B', 'h8': 'B',
                 'a7': 'B', 'b7': 'B', 'c7': 'B', 'd7': 'B', 'e7': 'B', 'f7': 'B', 'g7': 'B', 'h7': 'B',
                 'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0, 
@@ -129,7 +129,7 @@ def LoginGame(request):
                 'a1': 'W', 'b1': 'W', 'c1': 'W', 'd1': 'W', 'e1': 'W', 'f1': 'W', 'g1': 'W', 'h1': 'W'
             }
             request.session['cords_ancle'] = cords_ancle
-            request.session['location_figur'] = old
+            request.session['location_figur'] = location_figur
             filt_record.user2_id = curent_user
             filt_record.save()
             name1 = CustomUser.objects.get(id=user1)
